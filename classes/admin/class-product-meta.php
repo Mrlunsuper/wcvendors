@@ -452,11 +452,12 @@ class WCV_Product_Meta {
 	 */
 	public function save_product_media( $product ) {
 
-		global $post;
 		if ( ! is_a( $product, 'WC_Product' ) ) {
 			return;
 		}
-		$vendor = $post->post_author;
+		$product_id = $product->get_id();
+		$post       = get_post( $product_id );
+		$vendor     = $post->post_author;
 
 		$attachment_ids   = $product->get_gallery_image_ids( 'edit' );
 		$attachment_ids[] = $product->get_image_id( 'edit' );
