@@ -460,7 +460,14 @@ class WCV_Product_Meta {
 		$vendor     = $post->post_author;
 
 		$attachment_ids   = $product->get_gallery_image_ids( 'edit' );
-		$attachment_ids[] = $product->get_image_id( 'edit' );
+		$attachment_ids[] = intval( $product->get_image_id( 'edit' ) );
+		if ( isset( $_POST['_wc_file_urls'] ) ) {
+			$download_files = array_map( 'esc_attr', $_POST['_wc_file_urls'] );
+			foreach ( $download_files as $file_url ) {
+				$media_id         = attachment_url_to_postid( $file_url );
+				$attachment_ids[] = $media_id;
+			}
+		}
 
 		foreach ( $attachment_ids as $id ) {
 			$edit_attachment = array(
