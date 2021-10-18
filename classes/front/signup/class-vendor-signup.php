@@ -41,7 +41,7 @@ class WCV_Vendor_Signup {
 	 *
 	 */
 	public function vendor_option() {
-		$label_css_classes     = apply_filters( 'wcvendors_vendor_registration_label_classes', 'apply_for_vendor_label' );
+		$label_css_classes     = apply_filters( 'wcvendors_vendor_registration_label_css_classes', 'apply_for_vendor_label' );
 		$become_a_vendor_label = strtolower( __( get_option( 'wcvendors_label_become_a_vendor', __( 'Become a ', 'wc-vendors' ) ), 'wc-vendors' ) );
 
 		apply_filters( 'wcvendors_vendor_signup_path', include_once 'views/html-vendor-signup.php' );
