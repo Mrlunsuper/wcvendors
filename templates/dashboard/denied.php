@@ -54,7 +54,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					       id="agree_to_terms" <?php checked( isset( $_POST['agree_to_terms'] ), true ); ?>
 					       type="checkbox" name="agree_to_terms" value="1"/>
 					<label for="agree_to_terms"
-					       class="checkbox"><?php printf( __( 'I have read and accepted the <a href="%s">terms and conditions</a>', 'wc-vendors' ), get_permalink( $terms_page ) ); ?></label>
+					       class="checkbox <?php echo esc_attr( $term_label_css_classes ); ?>"><?php printf( __( 'I have read and accepted the <a href="%s">terms and conditions</a>', 'wc-vendors' ), get_permalink( $terms_page ) ); ?></label>
 				</p>
 
 				<script type="text/javascript">
