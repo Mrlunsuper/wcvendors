@@ -17,7 +17,7 @@
 <?php do_action( 'wcvendors_login_apply_for_vendor_before' ); ?>
 
 <p>
-	<label for="apply_for_vendor" class="<?php echo esc_attr( $label_css_classes ); ?>">
+	<label for="apply_for_vendor" class="<?php echo esc_attr( $apply_label_css_classes ); ?>">
 		<input class="input-checkbox"
 		       id="apply_for_vendor" <?php checked( isset( $_POST['apply_for_vendor'] ), true ); ?> type="checkbox"
 		       name="apply_for_vendor" value="1"/>
