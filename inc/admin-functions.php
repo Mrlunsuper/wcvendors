@@ -2,7 +2,7 @@
 /**
  * WC Vendors Admin Functions
  *
- * @package     WCVendors/Functions
+ * @package WCVendors/Functions
  */
 
 /**
@@ -24,7 +24,14 @@ function wcv_get_screen_ids() {
 	return apply_filters( 'wcvendors_screen_ids', $screen_ids );
 }
 
-// Output a single select page drop down
+/**
+ * Output a single select page drop down
+ *
+ * @param int    $id the css ID.
+ * @param string $value the value for the dropdown.
+ * @param string $class the CSS class.
+ * @param string $css Extra CSS styles.
+ */
 function wcv_single_select_page( $id, $value, $class = '', $css = '' ) {
 
 	$dropdown_args = array(
@@ -38,5 +45,5 @@ function wcv_single_select_page( $id, $value, $class = '', $css = '' ) {
 		'selected'         => $value,
 	);
 
-	echo str_replace( ' id=', " data-placeholder='" . esc_attr__( 'Select a page&hellip;', 'wc-vendors' ) . "' style='" . $css . "' class='" . $class . "' id=", wp_dropdown_pages( $dropdown_args ) );
+	echo esc_html( str_replace( ' id=', " data-placeholder='" . esc_attr__( 'Select a page&hellip;', 'wc-vendors' ) . "' style='" . $css . "' class='" . $class . "' id=", wp_dropdown_pages( $dropdown_args ) ) );
 }

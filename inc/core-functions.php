@@ -5,6 +5,11 @@
  * @package WCVendors/Functions
  */
 
+/**
+ * Get the permalink structure
+ *
+ * @return string The permalink structure.
+ */
 function wcv_get_permalink_structure() {
 	$permalinks = wp_parse_args(
 		(array) get_option( 'wcvendors_permalinks', array() ),
@@ -13,7 +18,7 @@ function wcv_get_permalink_structure() {
 		)
 	);
 
-	// Ensure that the permalinks are set
+	// Ensure that the permalinks are set.
 	$permalinks['vendor_shop_base'] = untrailingslashit( empty( $permalinks['vendor_shop_base'] ) ? __( 'vendors', 'wc-vendors' ) : $permalinks['vendor_shop_base'] );
 
 	return $permalinks;
@@ -22,7 +27,7 @@ function wcv_get_permalink_structure() {
 /**
  * Formats the order status for localization
  *
- * @param string $order_status
+ * @param string $order_status The order status to format.
  *
  * @since 1.0.0
  */
@@ -72,11 +77,12 @@ function wcv_format_order_status( $order_status = '' ) {
  * using the $format parameter
  *
  * @param string $string The date to be converted.
- * @param string $format The format string for the returned date (default is Y-m-d H:i:s)
+ * @param string $format The format string for the returned date (default is Y-m-d H:i:s).
+ * @param string $timezone_string The timezone string.
  *
- * @return string Formatted date relative to the timezone / GMT offset.
+ * @return  string Formatted date relative to the timezone / GMT offset.
  * @version 1.0.0
- * @since 1.0.0
+ * @since   1.0.0
  */
 function wcv_get_date_from_gmt( $string, $format = 'Y-m-d H:i:s', $timezone_string ) {
 	$tz = $timezone_string;
@@ -89,14 +95,14 @@ function wcv_get_date_from_gmt( $string, $format = 'Y-m-d H:i:s', $timezone_stri
 		$datetime = date_create( $string, new DateTimeZone( 'UTC' ) );
 
 		if ( ! $datetime ) {
-			return date( $format, 0 );
+			return gmdate( $format, 0 );
 		}
 
 		$datetime->setTimezone( new DateTimeZone( $tz ) );
 		$string_localtime = $datetime->format( $format );
 	} else {
 		if ( ! preg_match( '#([0-9]{1,4})-([0-9]{1,2})-([0-9]{1,2}) ([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2})#', $string, $matches ) ) {
-			return date( $format, 0 );
+			return gmdate( $format, 0 );
 		}
 
 		$string_time      = gmmktime( $matches[4], $matches[5], $matches[6], $matches[2], $matches[3], $matches[1] );
@@ -109,10 +115,11 @@ function wcv_get_date_from_gmt( $string, $format = 'Y-m-d H:i:s', $timezone_stri
 /**
  * Formats the order and payout dates to be consistent
  *
- * @param string $sql_date
+ * @param string $sql_date The sql date to format.
+ * @param string $timezone The timezone to format to.
  *
- * @return string $date
- * @since 1.0.0
+ * @return  string $date
+ * @since   1.0.0
  * @version 1.0.0
  */
 function wcv_format_date( $sql_date, $timezone = '' ) {

@@ -3,21 +3,47 @@
   "prefer-stable": true,
   "minimum-stability": "dev",
   "require": {
-    "automattic/jetpack-autoloader": "^1.2.0",
-    "woocommerce/woocommerce-sniffs": "^0.0.9"
+    "automattic/jetpack-autoloader": "^2",
+    "woocommerce/woocommerce-sniffs": "^0.1"
   },
   "require-dev": {
     "brain/monkey": "^2.3",
-    "phpunit/phpunit": "^8.4"
+    "phpunit/phpunit": "^8.4",
+    "codeception/codeception": "^4.1",
+    "lucatume/wp-browser": "^3.0", 
+    "codeception/module-asserts": "^1.0",
+    "codeception/module-phpbrowser": "^1.0",
+    "codeception/module-db": "^1.0",
+    "codeception/module-filesystem": "^1.0",
+    "codeception/module-cli": "^1.0",
+    "codeception/util-universalframework": "^1.0",
+    "phpcompatibility/phpcompatibility-wp": "*",
+    "yoast/wp-test-utils": "^0.2.2",
+    "wp-coding-standards/wpcs": "^2.3"
   },
   "autoload": {
     "psr-4": {
       "WCVendors\\": "src/"
-    },
-    "files": [
-      "./inc/wcv-core-functions.php",
-      "./inc/wcv-vendor-functions.php",
-      "./inc/wcv-admin-functions.php"
-    ]
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "WCVendors\\Tests\\": "tests/"
+    }
+  },
+  "scripts": {
+    "test": [
+			"@php ./vendor/bin/phpunit"
+		],
+		"integration-test": [
+			"@php ./vendor/bin/phpunit -c phpunit-integration.xml.dist"
+		],
+    "phpcs": [
+      "@php ./vendor/bin/phpcs"
+    ],
+    "phpcsi": "phpcs -i",
+    "phpcbf": "phpcbf",
+    "chromedriver" : "./vendor/bin/chromedriver --url-base=/wd/hub",
+    "codecept": "./vendor/bin/codecept run --steps"
   }
 }

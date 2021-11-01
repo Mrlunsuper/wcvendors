@@ -4,7 +4,7 @@
  *
  * Registers post types
  *
- * @package     WCVendors
+ * @package WCVendors
  */
 
 namespace WCVendors;
