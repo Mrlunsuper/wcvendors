@@ -65,7 +65,7 @@ class VendorsManagementTable extends \WP_List_Table {
 		$search_term   = isset( $_GET['s'] ) ? sanitize_text_field( wp_unslash( $_GET['s'] ) ) : '';
 		$vendor_status = isset( $_GET['vendor_status'] ) ? sanitize_text_field( wp_unslash( $_GET['vendor_status'] ) ) : '';
 
-		$roles = $this::get_vendor_roles();
+		$roles = $this->get_vendor_roles();
 
 		if ( ! empty( $vendor_status ) ) {
 			switch ( $vendor_status ) {
@@ -127,7 +127,7 @@ class VendorsManagementTable extends \WP_List_Table {
 	 * @return number
 	 */
 	private function records_count() {
-		$roles = $this::get_vendor_roles();
+		$roles = $this->get_vendor_roles();
 		$users = get_users(
 			array(
 				'role__in'    => $roles,
@@ -295,16 +295,15 @@ class VendorsManagementTable extends \WP_List_Table {
 				switch ( $action ) {
 
 					case 'delete':
-						do_action( 'wcvendors_delete', $vendor_id );
-
+						do_action( 'wcvendors_delete_vendor', $vendor_id );
 						break;
 
 					case 'deny_vendor':
-						do_action( 'wcvendors_deny', $vendor_id );
+						do_action( 'wcvendors_deny_vendor', $vendor_id );
 						break;
 
 					case 'approve_vendor':
-						do_action( 'wcvendors_approve', $vendor_id );
+						do_action( 'wcvendors_approve_vendor', $vendor_id );
 						break;
 				}
 			}
@@ -337,7 +336,7 @@ class VendorsManagementTable extends \WP_List_Table {
 	 * @version 1.0.0
 	 */
 	public function no_items() {
-		_esc_html_e( 'No vendor avaliable.', 'wc-vendors' );
+		\esc_html_e( 'No vendor avaliable.', 'wc-vendors' );
 	}
 
 	/**
@@ -354,7 +353,7 @@ class VendorsManagementTable extends \WP_List_Table {
 		$action_nonce = wp_create_nonce( 'vendor_action_nonce' );
 		$page         = isset( $_GET['page'] ) ? filter_input( INPUT_GET, 'page', FILTER_SANITIZE_STRING ) : '';
 		$actions      = array(
-			'delete'         => sprintf( '<a href="?page=%s&action=%s&vendor_id=%s&_wpnonce=%s">Delete</a>', esc_attr( $page ), 'delete', absint( $item['ID'] ), $action_nonce ),
+			'delete'         => sprintf( '<a class="delete_vendor" href="?page=%s&action=%s&vendor_id=%s&_wpnonce=%s">Delete</a>', esc_attr( $page ), 'delete', absint( $item['ID'] ), $action_nonce ),
 			'edit'           => sprintf( '<a href="%s?user_id=%s&">Edit</a>', admin_url() . 'user-edit.php', $item['ID'] ),
 			'approve_vendor' => sprintf( '<a href="?page=%s&action=%s&vendor_id=%s&_wpnonce=%s">Approve</a>', esc_attr( $page ), 'approve_vendor', absint( $item['ID'] ), $action_nonce ),
 			'deny_vendor'    => sprintf( '<a href="?page=%s&action=%s&vendor_id=%s&_wpnonce=%s">Deny</a>', esc_attr( $page ), 'deny_vendor', absint( $item['ID'] ), $action_nonce ),
@@ -394,11 +393,11 @@ class VendorsManagementTable extends \WP_List_Table {
 	 */
 	public function get_bulk_actions() {
 		$actions = array(
-			'delete'  => 'Delete',
-			'disable' => 'Disable',
-			'enable'  => 'Enable',
-			'approve' => 'Approve',
-			'deny'    => 'Deny',
+			'delete'  => __( 'Delete', 'wc-vendors' ),
+			'disable' => __( 'Disable', 'wc-vendors' ),
+			'enable'  => __( 'Enable', 'wc-vendors' ),
+			'approve' => __( 'Approve', 'wc-vendors' ),
+			'deny'    => __( 'Deny', 'wc-vendors' ),
 		);
 
 		return $actions;
@@ -411,7 +410,7 @@ class VendorsManagementTable extends \WP_List_Table {
 	 * @return array of views
 	 */
 	public function get_views() {
-		$page  = isset( $_GET['page'] ) ? esc_attr( absint( $_GET['page'] ) ) : 0;
+		$page  = 'wcv-vendors';
 		$views = array(
 			'all'      => sprintf( '<li class="all"><a href="' . admin_url( 'admin.php?page=%s' ) . '">' . __( 'All', 'wc-vendors' ) . '</a></li>', $page ),
 			'accepted' => sprintf( '<li class="all"><a href="' . admin_url( 'admin.php?page=%s&vendor_status=approved' ) . '">' . __( 'Approved Vendors', 'wc-vendors' ) . '</a></li>', $page ),

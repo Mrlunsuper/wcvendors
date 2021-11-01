@@ -28,9 +28,9 @@ class VendorHandler {
 	public function init_hooks() {
 		add_action( 'wcvendors_throw_message', array( $this, 'throw_message' ), 10, 2 );
 		add_action( 'wp_ajax_enable_vendor', array( $this, 'toogle_enable' ) );
-		add_action( 'wcvendors_approve', array( $this, 'approve' ), 10, 1 );
-		add_action( 'wcvendors_deny', array( $this, 'deny' ), 10, 1 );
-		add_action( 'wcvendors_delete', array( $this, 'delete' ), 10, 1 );
+		add_action( 'wcvendors_approve_vendor', array( $this, 'approve' ), 10, 1 );
+		add_action( 'wcvendors_deny_vendor_vendor', array( $this, 'deny' ), 10, 1 );
+		add_action( 'wcvendors_delete_vendor', array( $this, 'delete' ), 10, 1 );
 		add_action( 'wcvendors_bulkdeny_vendor', array( $this, 'bulk_deny' ), 10, 1 );
 		add_action( 'wcvendors_bulkapprove_vendor', array( $this, 'bulk_approve' ), 10, 1 );
 		add_action( 'wcvendors_bulkdisable_vendor', array( $this, 'bulk_disable' ), 10, 1 );
@@ -87,7 +87,7 @@ class VendorHandler {
 			return true;
 		}
 
-		$this->throw_message( /* translators: Notice deny error. */ sprintf( __( 'Cannot deny %s', 'wc-vendors' ), $user->user_nicename ), 'error' );
+		$this->throw_message( /* translators: Notice deny error. */ sprintf( __( 'Can\'t deny %s', 'wc-vendors' ), $user->user_nicename ), 'error' );
 		return false;
 	}
 
@@ -133,7 +133,7 @@ class VendorHandler {
 			return true;
 		}
 
-		$this->throw_message( /* translators: Notice approve success. */ sprintf( __( 'Cannot approve %s', 'wc-vendors' ), $user->user_nicename ), 'error' );
+		$this->throw_message( /* translators: Notice approve success. */ sprintf( __( 'Can\'t approve %s', 'wc-vendors' ), $user->user_nicename ), 'error' );
 		return false;
 	}
 	/**
