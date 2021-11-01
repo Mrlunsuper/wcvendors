@@ -82,6 +82,13 @@ class Plugin {
 		( new Admin\MetaBoxes() )->init_hooks();
 		( new Admin\Users() )->init_hooks();
 		( new Emails\Emails() )->init_hooks();
+
+		$user_id = get_current_user_id();
+
+		if ( wcv_is_vendor( $user_id ) ) {
+			( new Admin\Vendor\Menus() )->init_hook();
+		}
+		
 	}
 
 	/**

@@ -90,6 +90,10 @@ function wcv_format_user_data( $vendor_id ) {
  */
 function wcv_is_vendor( $vendor ) {
 
+	if ( is_numeric( $vendor ) ) {
+		$vendor = get_userdata( $vendor );
+	}
+
 	if ( is_object( $vendor ) ) {
 		if ( is_array( $vendor->roles ) ) {
 			return in_array( 'vendor', $vendor->roles, true );
@@ -338,4 +342,73 @@ function wcv_get_vendor_from_product( $product_id ) {
 function wcv_get_avatar_url( $vendor_id ) {
 	$avatar_url = get_avatar_url( $vendor_id );
 	return apply_filters( 'wcvendors_get_avatar_url', $avatar_url, $vendor_id );
+}
+
+if ( ! function_exists( 'wcv_get_vendor_shop_page' ) ) {
+
+	/**
+	 * Retrieve the shop page for a specific vendor
+	 *
+	 * @param unknown $vendor_id
+	 *
+	 * @return string
+	 */
+	function wcv_get_vendor_shop_page( $vendor_id ) {
+
+		$vendor_id = wcv_get_vendor_id( $vendor_id );
+		if ( ! $vendor_id ) {
+			return;
+		}
+
+		$slug   = get_user_meta( $vendor_id, 'pv_shop_slug', true );
+		$vendor = ! $slug ? get_userdata( $vendor_id )->user_login : $slug;
+
+		if ( get_option( 'permalink_structure' ) ) {
+			$permalink = trailingslashit( get_option( 'wcvendors_vendor_shop_permalink' ) );
+
+			return trailingslashit( home_url( sprintf( '/%s%s', $permalink, $vendor ) ) );
+		} else {
+			return esc_url( add_query_arg( array( 'vendor_shop' => $vendor ), get_post_type_archive_link( 'product' ) ) );
+		}
+	}
+}
+
+if ( ! function_exists( 'wcv_get_vendor_id' ) ) {
+		/**
+	 * Grabs the vendor ID whether a username or an int is provided
+	 * and returns the vendor_id if it's actually a vendor
+	 *
+	 * @param unknown $input
+	 *
+	 * @return unknown
+	 */
+	function wcv_get_vendor_id( $input ) {
+
+		if ( empty( $input ) ) {
+			return false;
+		}
+
+		$users = get_users(
+			array(
+				'meta_key'   => 'pv_shop_slug',
+				'meta_value' => sanitize_title( $input ),
+			)
+		);
+
+		if ( ! empty( $users ) && 1 == count( $users ) ) {
+			$vendor = $users[0];
+		} else {
+			$int_vendor = is_numeric( $input );
+			$vendor     = ! empty( $int_vendor ) ? get_userdata( $input ) : get_user_by( 'login', $input );
+		}
+
+		if ( $vendor ) {
+			$vendor_id = $vendor->ID;
+			if ( wcv_is_vendor( $vendor_id ) ) {
+				return $vendor_id;
+			}
+		}
+
+		return false;
+	}
 }
