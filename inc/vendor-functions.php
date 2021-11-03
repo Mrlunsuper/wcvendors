@@ -368,8 +368,8 @@ if ( ! function_exists( 'wcv_get_vendor_shop_page' ) ) {
 			return;
 		}
 
-		$vendor = new Vendor( $vendor_id );
-		$slug   = $vendor->get_slug();
+		$vendor      = new Vendor( $vendor_id );
+		$slug        = $vendor->get_slug();
 		$vendor_slug = ! $slug ? $vendor->get_wp_user()->get_user_login() : $slug;
 
 		if ( get_option( 'permalink_structure' ) ) {
