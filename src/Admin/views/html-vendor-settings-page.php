@@ -28,7 +28,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					<td>
 						<input type="email" name="pv_paypal" class="regular-text" id="pv_paypal"
 					           placeholder="some@email.com"
-					           value="<?php echo get_user_meta( $user_id, 'pv_paypal', true ); ?>">
+					           value="<?php echo esc_attr( $paypal_email ); ?>">
 						<p class="description">
 							<?php _e( 'Your PayPal address can be used to send you your commission.', 'wc-vendors' ); ?>
 							<br>
@@ -51,7 +51,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					</th>
 					<td>
 						<input type="text" name="wcv_bank_account_name" id="wcv_bank_account_name"
-					           value="<?php echo get_user_meta( $user_id, 'wcv_bank_account_name', true ); ?>"
+					           value="<?php echo esc_attr( $bank_details['account_name'] ); ?>"
 					           class="regular-text">
 					</td>
 				</tr>
@@ -63,7 +63,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					</th>
 					<td>
 						<input type="text" name="wcv_bank_account_number" id="wcv_bank_account_number"
-					           value="<?php echo get_user_meta( $user_id, 'wcv_bank_account_number', true ); ?>"
+					           value="<?php echo esc_attr( $bank_details['account_number'] ); ?>"
 					           class="regular-text">
 					</td>
 				</tr>
@@ -75,7 +75,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					</th>
 					<td>
 						<input type="text" name="wcv_bank_name" id="wcv_bank_name"
-                               value="<?php echo get_user_meta( $user_id, 'wcv_bank_name', true ); ?>"
+                               value="<?php echo esc_attr( $bank_details['bank_name'] ); ?>"
                                class="regular-text">
 					</td>
 				</tr>
@@ -87,7 +87,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					</th>
 					<td>
 						<input type="text" name="wcv_bank_routing_number" id="wcv_bank_routing_number"
-					           value="<?php echo get_user_meta( $user_id, 'wcv_bank_routing_number', true ); ?>"
+					           value="<?php echo esc_attr( $bank_details['routing_number'] ); ?>"
 					           class="regular-text">
 					</td>
 				</tr>
@@ -99,7 +99,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					</th>
 					<td>
 						<input type="text" name="wcv_bank_iban" id="wcv_bank_iban"
-					           value="<?php echo get_user_meta( $user_id, 'wcv_bank_iban', true ); ?>"
+					           value="<?php echo esc_attr( $bank_details['iban'] ); ?>"
 					           class="regular-text">
 					</td>
 				</tr>
@@ -111,7 +111,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 					</th>
 					<td>
 						<input type="text" name="wcv_bank_bic_swift" id="wcv_bank_bic_swift"
-					           value="<?php echo get_user_meta( $user_id, 'wcv_bank_bic_swift', true ); ?>"
+					           value="<?php echo esc_attr( $bank_details['bic_swift'] ); ?>"
 					           class="regular-text">
 					</td>
 				</tr>
@@ -127,7 +127,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 				</th>
 				<td>
 					<input type="text" name="pv_shop_name" id="pv_shop_name" placeholder="Your shop name"
-				           value="<?php echo get_user_meta( $user_id, 'pv_shop_name', true ); ?>">
+				           value="<?php echo esc_attr( $store_name ); ?>">
                     <p class="description">
 						<?php _e( 'Your shop name is public and must be unique.', 'wc-vendors' ); ?>
 					</p>

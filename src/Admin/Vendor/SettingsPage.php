@@ -2,6 +2,8 @@
 
 namespace WCVendors\Admin\Vendor;
 
+use WCVendors\Vendor\Vendor;
+
 if ( ! defined( 'ABSPATH' ) ) {
 	exit; // Exit if accessed directly.
 }
@@ -12,13 +14,18 @@ class SettingsPage {
 
 	public static function output() {
 		$user_id          = get_current_user_id();
+		$vendor           = new Vendor( $user_id );
 		$paypal_address   = true;
 		$shop_description = true;
-		$description      = get_user_meta( $user_id, 'pv_shop_description', true );
-		$seller_info      = get_user_meta( $user_id, 'pv_seller_info', true );
-		$has_html         = get_user_meta( $user_id, 'pv_shop_html_enabled', true );
-		$shop_page        = wcv_get_vendor_shop_page( wp_get_current_user()->user_login );
+		$store_name       = $vendor->get_store_name();
+		$paypal_email     = $vendor->get_paypal_email();
+		$description      = $vendor->get_description();
+		$seller_info      = $vendor->get_info();
+		$has_html         = $vendor->get_store_prop( 'pv_shop_html_enabled' );
+		$shop_page        = wcv_get_vendor_shop_page( $user_id );
 		$global_html      = wc_string_to_bool( get_option( 'wcvendors_display_shop_description_html', 'no' ) );
+		$bank_details    = $vendor->get_bank_details();
+
 		include WCV_ABSPATH_ADMIN . 'views/html-vendor-settings-page.php';
 	}
 	/**
@@ -36,15 +43,17 @@ class SettingsPage {
 				return false;
 			}
 
+			$vendor = new Vendor( $user_id );
+
 			if ( isset( $_POST['pv_paypal'] ) && '' !== $_POST['pv_paypal'] ) {
 				if ( ! is_email( $_POST['pv_paypal'] ) ) {
 					$error_msg .= __( 'Your PayPal address is not a valid email address.', 'wc-vendors' );
 					$error      = true;
 				} else {
-					update_user_meta( $user_id, 'pv_paypal', $_POST['pv_paypal'] );
+					$vendor->set_paypal_email( sanitize_email( $_POST['pv_paypal'] ) );
 				}
 			} else {
-				update_user_meta( $user_id, 'pv_paypal', $_POST['pv_paypal'] );
+				$vendor->set_paypal_email( sanitize_email( $_POST['pv_paypal'] ) );
 			}
 
 			if ( ! empty( $_POST['pv_shop_name'] ) ) {
@@ -58,38 +67,39 @@ class SettingsPage {
 					$error_msg .= __( 'That shop name is already taken. Your shop name must be unique.', 'wc-vendors' );
 					$error      = true;
 				} else {
-					update_user_meta( $user_id, 'pv_shop_name', $_POST['pv_shop_name'] );
-					update_user_meta( $user_id, 'pv_shop_slug', sanitize_title( $_POST['pv_shop_name'] ) );
+					$vendor->set_store_name( sanitize_text_field( $_POST['pv_shop_name'] ) );
+					$vendor->set_slug( sanitize_title( $_POST['pv_shop_name'] ) );
 				}
 			}
 
 			if ( isset( $_POST['pv_shop_description'] ) ) {
-				update_user_meta( $user_id, 'pv_shop_description', $_POST['pv_shop_description'] );
+				$vendor->set_description( sanitize_textarea_field( $_POST['pv_shop_description'] ) );
 			}
 
 			if ( isset( $_POST['pv_seller_info'] ) ) {
-				update_user_meta( $user_id, 'pv_seller_info', $_POST['pv_seller_info'] );
+				$vendor->set_info( sanitize_textarea_field( $_POST['pv_seller_info'] ) );
 			}
 
 			// Bank details
-			if ( isset( $_POST['wcv_bank_account_name'] ) ) {
-				update_user_meta( $user_id, 'wcv_bank_account_name', $_POST['wcv_bank_account_name'] );
-			}
-			if ( isset( $_POST['wcv_bank_account_number'] ) ) {
-				update_user_meta( $user_id, 'wcv_bank_account_number', $_POST['wcv_bank_account_number'] );
-			}
-			if ( isset( $_POST['wcv_bank_name'] ) ) {
-				update_user_meta( $user_id, 'wcv_bank_name', $_POST['wcv_bank_name'] );
-			}
-			if ( isset( $_POST['wcv_bank_routing_number'] ) ) {
-				update_user_meta( $user_id, 'wcv_bank_routing_number', $_POST['wcv_bank_routing_number'] );
-			}
-			if ( isset( $_POST['wcv_bank_iban'] ) ) {
-				update_user_meta( $user_id, 'wcv_bank_iban', $_POST['wcv_bank_iban'] );
-			}
-			if ( isset( $_POST['wcv_bank_bic_swift'] ) ) {
-				update_user_meta( $user_id, 'wcv_bank_bic_swift', $_POST['wcv_bank_bic_swift'] );
-			}
+
+			$bank_account_name   = isset( $_POST['wcv_bank_account_name'] ) ? sanitize_text_field( $_POST['wcv_bank_account_name'] ) : '';
+			$bank_account_number = isset( $_POST['wcv_bank_account_number'] ) ? sanitize_text_field( $_POST['wcv_bank_account_number'] ) : '';
+			$bank_name           = isset( $_POST['wcv_bank_name'] ) ? sanitize_text_field( $_POST['wcv_bank_name'] ) : '';
+			$bank_routing_number = isset( $_POST['wcv_bank_routing_number'] ) ? sanitize_text_field( $_POST['wcv_bank_routing_number'] ) : '';
+			$bank_iban           = isset( $_POST['wcv_bank_iban'] ) ? sanitize_text_field( $_POST['wcv_bank_iban'] ) : '';
+			$bank_bic_swift      = isset( $_POST['wcv_bank_bic_swift'] ) ? sanitize_text_field( $_POST['wcv_bank_bic_swift'] ) : '';
+
+			$bank_details = array(
+				'account_name'   => $bank_account_name,
+				'account_number' => $bank_account_number,
+				'bank_name'      => $bank_name,
+				'routing_number' => $bank_routing_number,
+				'iban'           => $bank_iban,
+				'bic_swift'      => $bank_bic_swift,
+			);
+
+			$vendor->set_bank_details( $bank_details );
+            $vendor->save();
 
 			do_action( 'wcvendors_shop_settings_admin_saved', $user_id );
 

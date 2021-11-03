@@ -1,7 +1,7 @@
 <?php 
 
 namespace WCVendors\Vendor; 
-use WP_Query;
+use WP_User;
 
 /**
  * The Vendor Object
@@ -160,13 +160,13 @@ use WP_Query;
 
         // New Vendor, load defaults 
         if ( ! $this->id ){ 
-            $this->store_data = wcv_vendor_store_info_defaults(); 
+            $this->store_data = wcv_vendor_store_data_defaults(); 
             return;
         } 
 
         $store_data = get_user_meta( $this->get_id(), $this->get_meta_key(), true ); 
         $store_data = is_array( $store_data ) ? $store_data : array(); 
-        $store_data = wp_parse_args( $store_data, wcv_vendor_store_info_defaults() ); 
+        $store_data = wp_parse_args( $store_data, wcv_vendor_store_data_defaults() ); 
        
         $this->store_data = apply_filters( $this->get_hook_prefix() . '_store_data', $store_data, $this ); 
 
@@ -517,7 +517,7 @@ use WP_Query;
      */
     protected function get_payout_detail( $payout ){
         $value = null;
-		if ( array_key_exists( $payout, $this->store_data['payout'][ $payout ] ) ) {
+		if ( array_key_exists( $payout, $this->store_data['payout'] ) ) {
 			$value = isset( $this->changes['payout'][ $payout ] ) ? $this->changes['payout'][ $payout ]: $this->store_data['payout'][ $payout ];
 
 		}
@@ -532,7 +532,7 @@ use WP_Query;
 	 */
     public function get_paypal_email(){
         $paypal = $this->get_payout_detail( 'paypal' ); 
-        return $paypal->email;  
+        return $paypal['email'];  
     }
 
     /**
@@ -544,7 +544,7 @@ use WP_Query;
 	 */
     public function get_bank_details(){
         $bank_details = $this->get_payout_detail( 'bank' ); 
-        return $bank_details; 
+        return $bank_details;
     }
 
     /**

@@ -8,6 +8,7 @@
  * @version 3.0.0
  */
 
+ use WCVendors\Vendor\Vendor;
 /**
  * The vendor store info defaults plugins can hook into this to add more data to a vendor store.
  *
@@ -247,8 +248,15 @@ if ( ! function_exists( 'wcv_set_primary_vendor_role' ) ) {
  */
 function wcv_get_vendor_shop_name( $vendor ) {
 
-	$shop_name = $vendor->get_shop_name() ? $vendor->get_shop_name : $vendor->get_wp_user()->get_user_login();
-	return apply_filters( 'wcvendors_get_vendor_shop_name', $shop_name, $vendor_id );
+	if ( is_numeric( $vendor ) ) {
+		if ( ! wcv_is_vendor( $vendor ) ) {
+			return;
+		}
+		$vendor = new Vendor( $vendor );
+	}
+
+	$shop_name = $vendor->get_store_name() ? $vendor->get_store_name() : $vendor->get_wp_user()->get_user_login();
+	return apply_filters( 'wcvendors_get_vendor_shop_name', $shop_name, $vendor );
 }
 
 /**
@@ -360,15 +368,16 @@ if ( ! function_exists( 'wcv_get_vendor_shop_page' ) ) {
 			return;
 		}
 
-		$slug   = get_user_meta( $vendor_id, 'pv_shop_slug', true );
-		$vendor = ! $slug ? get_userdata( $vendor_id )->user_login : $slug;
+		$vendor = new Vendor( $vendor_id );
+		$slug   = $vendor->get_slug();
+		$vendor_slug = ! $slug ? $vendor->get_wp_user()->get_user_login() : $slug;
 
 		if ( get_option( 'permalink_structure' ) ) {
 			$permalink = trailingslashit( get_option( 'wcvendors_vendor_shop_permalink' ) );
 
-			return trailingslashit( home_url( sprintf( '/%s%s', $permalink, $vendor ) ) );
+			return trailingslashit( home_url( sprintf( '/%s%s', $permalink, $vendor_slug ) ) );
 		} else {
-			return esc_url( add_query_arg( array( 'vendor_shop' => $vendor ), get_post_type_archive_link( 'product' ) ) );
+			return esc_url( add_query_arg( array( 'vendor_shop' => $vendor_slug ), get_post_type_archive_link( 'product' ) ) );
 		}
 	}
 }
