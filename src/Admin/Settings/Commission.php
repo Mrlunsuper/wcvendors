@@ -64,6 +64,20 @@ class Commission extends Base {
 				'type'    => 'number',
 			),
 			array(
+				'title'   => __( 'Include product taxes in calculations', 'wc-vendors' ),
+				'desc'    => __( 'Commission calculation will be included taxes if tax enable', 'wc-vendors' ),
+				'id'      => 'wcvendors_vendor_commission_include_tax',
+				'default' => 'no',
+				'type'    => 'checkbox',
+			),
+			array(
+				'title'   => __( 'Include shipping (and shipping taxes) in calculations', 'wc-vendors' ),
+				'desc'    => __( 'Commission calculation will be included shipping and shipping taxes', 'wc-vendors' ),
+				'id'      => 'wcvendors_vendor_commission_include_shipping',
+				'default' => 'no',
+				'type'    => 'checkbox',
+			),
+			array(
 				'type' => 'sectionend',
 				'id'   => 'commission_options',
 			),
