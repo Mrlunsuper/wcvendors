@@ -12,6 +12,10 @@ use WC_Data_Exception;
 use WC_Data_Store;
 use WC_Order;
 use WC_Order_Item_Tax;
+use WC_Order_Item_Fee;
+use WC_Order_Item_Shipping;
+use WC_Order_Item_Coupon;
+use Automattic\WooCommerce\Utilities\NumberUtil;
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -274,6 +278,15 @@ class VendorOrder extends WC_Order {
 	}
 
 	/**
+	 * Set commission
+	 *
+	 * @param float $value Commission value.
+	 */
+	public function set_commission_paid( $value ) {
+		$this->set_prop( 'commission_paid', $value );
+	}
+
+	/**
 	 * Set the order item ids for the order
 	 *
 	 * @todo Data duplication?
@@ -282,6 +295,58 @@ class VendorOrder extends WC_Order {
 	 */
 	public function set_order_item_ids( $value ) {
 		$this->set_prop( 'order_item_ids', $value );
+	}
+
+	/**
+	 * Sets order tax (sum of cart and shipping tax). Used internally only.
+	 *
+	 * @param string $value Value to set.
+	 * @throws WC_Data_Exception Exception may be thrown if value is invalid.
+	 */
+	protected function set_total_tax( $value ) {
+		// We round here because this is a total entry, as opposed to line items in other setters.
+		$this->set_prop( 'total_tax', wc_format_decimal( NumberUtil::round( $value, wc_get_price_decimals() ) ) );
+	}
+
+	/**
+	 * Set shipping_total.
+	 *
+	 * @param string $value Value to set.
+	 * @throws WC_Data_Exception Exception may be thrown if value is invalid.
+	 */
+	public function set_shipping_total( $value ) {
+		$this->set_prop( 'shipping_total', wc_format_decimal( $value ) );
+	}
+
+	/**
+	 * Set shipping_tax.
+	 *
+	 * @param string $value Value to set.
+	 * @throws WC_Data_Exception Exception may be thrown if value is invalid.
+	 */
+	public function set_shipping_tax( $value ) {
+		$this->set_prop( 'shipping_tax', wc_format_decimal( $value ) );
+		$this->set_total_tax( (float) $this->get_cart_tax() + (float) $this->get_shipping_tax() );
+	}
+
+	/**
+	 * Set discount_total.
+	 *
+	 * @param string $value Value to set.
+	 * @throws WC_Data_Exception Exception may be thrown if value is invalid.
+	 */
+	public function set_discount_total( $value ) {
+		$this->set_prop( 'discount_total', wc_format_decimal( $value ) );
+	}
+
+	/**
+	 * Set discount_tax.
+	 *
+	 * @param string $value Value to set.
+	 * @throws WC_Data_Exception Exception may be thrown if value is invalid.
+	 */
+	public function set_discount_tax( $value ) {
+		$this->set_prop( 'discount_tax', wc_format_decimal( $value ) );
 	}
 
 	/**
@@ -316,6 +381,10 @@ class VendorOrder extends WC_Order {
 		// Don't calculate anything if there are no items.
 		if ( is_null( $this->get_items() ) ) {
 			return;
+		}
+
+		if( $and_taxes ) {
+			$this->calculate_taxes();
 		}
 
 		foreach ( $this->get_items() as $item ) {
@@ -359,6 +428,15 @@ class VendorOrder extends WC_Order {
 	 */
 
 	/**
+	 * Check if commission paid
+	 *
+	 * @return void
+	 */
+	public function get_commission_paid() {
+		return $this->get_prop( 'commission_paid' );
+	}
+
+	/**
 	 * Get if the commission is paid
 	 *
 	 * @return bool
@@ -367,4 +445,104 @@ class VendorOrder extends WC_Order {
 		return $this->get_commission_paid();
 	}
 
+	/**
+	 * Add fees to the order.
+	 *
+	 * @param WC_Order $parent_order Order instance.
+	 * @param WC_Cart  $cart  Cart instance.
+	 */
+	public function create_order_fee_lines( $parent_order, $cart ) {
+
+		foreach ( $cart->get_fees() as $fee_key => $fee ) {
+			$item                 = new WC_Order_Item_Fee();
+			$item->legacy_fee     = $fee;
+			$item->legacy_fee_key = $fee_key;
+			$item->set_props(
+				array(
+					'name'      => $fee->name,
+					'tax_class' => $fee->taxable ? $fee->tax_class : 0,
+					'amount'    => $fee->amount,
+					'total'     => $fee->total,
+					'total_tax' => $fee->tax,
+					'taxes'     => array(
+						'total' => $fee->tax_data,
+					),
+				)
+			);
+
+			do_action( 'wcvendors_vendor_order_create_order_fee_item', $item, $fee_key, $fee, $parent_order );
+
+			// Add item to order and save.
+			$this->add_item( $item );
+		}
+	}
+
+	/**
+	 * Add shipping lines to the order.
+	 *
+	 * @param WC_Order $order                   Order Instance.
+	 * @param array    $chosen_shipping_methods Chosen shipping methods.
+	 * @param array    $packages                Packages.
+	 */
+	public function create_order_shipping_lines( $parent_order, $chosen_shipping_methods, $packages ) {
+
+		$vendor_id  = $this->get_vendor_id();
+		$author_ids = array();
+		$parent_order = $this->get_parent_order() ? $this->get_parent_order() : $parent_order;
+		
+		if ( $parent_order && is_a( $parent_order , 'WC_Order' ) ) {
+			$shipping_method = $parent_order->get_shipping_method();
+			$this->set_prop( 'shipping_lines', $shipping_method->get_method_id() );
+			return;
+		}
+
+		foreach ( $packages as $package_key => $package ) {
+
+			if ( isset( $chosen_shipping_methods[ $package_key ], $package['rates'][ $chosen_shipping_methods[ $package_key ] ] ) ) {
+				$shipping_rate = $package['rates'][ $chosen_shipping_methods[ $package_key ] ];
+				foreach ( $package['contents'] as $item_key => $item ) {
+					$product_id = $item['product_id'] ? $item['product_id'] : $item['variation_id'];
+					$author_id  = get_post_field( 'post_author', $product_id );
+					if ( $author_id == $vendor_id ) {
+						$author_ids[] = $author_id;
+					}
+				}
+
+				if ( array_unique( $author_ids ) == array( $vendor_id ) ) {
+					$this->set_prop( 'shipping_lines', $shipping_rate->get_method_id() );
+				}
+			}
+		}
+	}
+
+	/**
+	 * Add coupon lines to the order.
+	 *
+	 * @param WC_Order $order Order instance.
+	 * @param WC_Cart  $cart  Cart instance.
+	 */
+	public function create_order_coupon_lines( $parent_order, $cart ) {
+		$parent_order = $this->get_parent_order() ? $this->get_parent_order() : $parent_order;
+		$coupons      = array();
+
+		if ( $parent_order ) {
+			$order_coupons = $parent_order->get_coupons();
+		}
+
+		$order_coupons  = $cart->get_coupons();
+
+		if ( $order_coupons) {
+			foreach( $parent_order->get_coupon_codes() as $code ) { 
+				$coupon    = new WC_Coupon( $code );
+				$coupon_id = $coupon->get_id();
+				$author_id = get_post_field( 'post_author', $coupon_id );
+
+				if ( $author_id == $this->get_vendor_id() ) {
+					$coupons[] = $code;
+				}
+			}
+		}
+
+		$this->set_prop( 'coupon_lines', $coupons );
+	}
 }
