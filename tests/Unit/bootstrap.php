@@ -17,3 +17,5 @@ $GLOBALS['wp_tests_options'] = [
 
 // Load functions files. 
 require_once __DIR__ . '/../../inc/vendor-functions.php';
+
+define( 'WC_ABSPATH', __DIR__ . '/../../vendor/woocommerce/woocommerce/' );

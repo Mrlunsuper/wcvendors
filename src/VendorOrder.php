@@ -13,8 +13,6 @@ use WC_Data_Store;
 use WC_Order;
 use WC_Order_Item_Tax;
 use WC_Order_Item_Fee;
-use WC_Order_Item_Shipping;
-use WC_Order_Item_Coupon;
 use Automattic\WooCommerce\Utilities\NumberUtil;
 
 if ( ! defined( 'ABSPATH' ) ) {

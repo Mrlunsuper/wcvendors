@@ -19,7 +19,8 @@
     "codeception/util-universalframework": "^1.0",
     "phpcompatibility/phpcompatibility-wp": "*",
     "yoast/wp-test-utils": "^0.2.2",
-    "wp-coding-standards/wpcs": "^2.3"
+    "wp-coding-standards/wpcs": "^2.3",
+    "woocommerce/woocommerce": "^5"
   },
   "autoload": {
     "psr-4": {
@@ -29,6 +30,16 @@
   "autoload-dev": {
     "psr-4": {
       "WCVendors\\Tests\\": "tests/"
+    },
+    "classmap": [
+      "vendor/woocommerce/woocommerce/includes/"
+    ]
+  },
+  "extra": {
+    "installer-paths": {
+      "vendor/{$vendor}/{$name}": [
+        "woocommerce/woocommerce"
+      ]
     }
   },
   "scripts": {
@@ -44,6 +55,9 @@
     "phpcsi": "phpcs -i",
     "phpcbf": "phpcbf",
     "chromedriver" : "./vendor/bin/chromedriver --url-base=/wd/hub",
-    "codecept": "./vendor/bin/codecept run --steps"
+    "codecept": "./vendor/bin/codecept run --steps",
+    "preferred-install": {
+      "woocommerce/woocommerce": "source"
+    }
   }
 }
