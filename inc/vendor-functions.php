@@ -383,14 +383,14 @@ if ( ! function_exists( 'wcv_get_vendor_shop_page' ) ) {
 }
 
 if ( ! function_exists( 'wcv_get_vendor_id' ) ) {
-		/**
-		 * Grabs the vendor ID whether a username or an int is provided
-		 * and returns the vendor_id if it's actually a vendor
-		 *
-		 * @param unknown $input
-		 *
-		 * @return unknown
-		 */
+	/**
+	 * Grabs the vendor ID whether a username or an int is provided
+	 * and returns the vendor_id if it's actually a vendor
+	 *
+	 * @param unknown $input
+	 *
+	 * @return unknown
+	 */
 	function wcv_get_vendor_id( $input ) {
 
 		if ( empty( $input ) ) {
