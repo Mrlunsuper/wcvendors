@@ -151,7 +151,7 @@ class Users {
 				case 'vendor':
 					$shop_name 		= wcv_get_vendor_sold_by( $user_id  );
 					$display_name 	= wcv_get_vendor_display_name( $user_id ); 
-					$store_url 		= wcv_get_vendor_shop_page( $user_id );
+					$store_url 		= wcv_get_storeurl( $user_id );
 					$target 		= apply_filters( 'wcv_users_view_store_url_target', 'target="_blank"' );
 					$class 			= apply_filters( 'wcv_users_view_store_url_class', 'class=""' );
 					return sprintf(

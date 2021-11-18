@@ -22,7 +22,7 @@ class SettingsPage {
 		$description      = $vendor->get_description();
 		$seller_info      = $vendor->get_info();
 		$has_html         = $vendor->get_store_prop( 'pv_shop_html_enabled' );
-		$shop_page        = wcv_get_vendor_shop_page( $user_id );
+		$shop_page        = wcv_get_storeurl( $user_id );
 		$global_html      = wc_string_to_bool( get_option( 'wcvendors_display_shop_description_html', 'no' ) );
 		$bank_details    = $vendor->get_bank_details();
 
