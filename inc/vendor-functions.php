@@ -384,13 +384,13 @@ if ( ! function_exists( 'wcv_get_vendor_shop_page' ) ) {
 
 if ( ! function_exists( 'wcv_get_vendor_id' ) ) {
 		/**
-	 * Grabs the vendor ID whether a username or an int is provided
-	 * and returns the vendor_id if it's actually a vendor
-	 *
-	 * @param unknown $input
-	 *
-	 * @return unknown
-	 */
+		 * Grabs the vendor ID whether a username or an int is provided
+		 * and returns the vendor_id if it's actually a vendor
+		 *
+		 * @param unknown $input
+		 *
+		 * @return unknown
+		 */
 	function wcv_get_vendor_id( $input ) {
 
 		if ( empty( $input ) ) {
@@ -419,5 +419,123 @@ if ( ! function_exists( 'wcv_get_vendor_id' ) ) {
 		}
 
 		return false;
+	}
+}
+
+if ( ! function_exists( 'wcv_maybe_migrate_user_meta' ) ) {
+
+	/**
+	 * Migrate user meta to vendor meta
+	 *
+	 * @param int|string $user_id
+	 */
+	function wcv_maybe_migrate_user_meta( $user_id, $vendor_meta_key ) {
+
+		$vendor_id = wcv_get_vendor_id( $user_id );
+
+		if ( ! $vendor_id ) {
+			return;
+		}
+
+		if ( ! wcv_is_vendor( $vendor_id ) ) {
+			return;
+		}
+
+		if ( get_user_meta( $user_id, $vendor_meta_key, true ) ) {
+			return true;
+		}
+
+		$prop_to_meta_map = array(
+			'store_name'    => 'pv_shop_name',
+			'info'          => 'pv_seller_info',
+			'description'   => 'pv_shop_description',
+			'company_url'   => '_wcv_company_url',
+			'slug'          => 'pv_shop_slug',
+			'phone'         => '_wcv_store_phone',
+			'email'         => 'billing_email',
+			'address'       => array(
+				'address_1' => '_wcv_store_address1',
+				'address_2' => '_wcv_store_address2',
+				'city'      => '_wcv_store_city',
+				'state'     => '_wcv_store_state',
+				'postcode'  => '_wcv_store_postcode',
+				'country'   => '_wcv_store_country',
+			),
+			'address_other' => array(),
+			'seo'           => array(
+				'title'            => 'wcv_seo_title',
+				'meta_description' => 'wcv_seo_meta_description',
+				'meta_keywords'    => 'wcv_seo_meta_keywords',
+			),
+			'social'        => array(
+				'twitter'  => array(
+					'title'       => 'wcv_seo_twitter_title',
+					'description' => 'wcv_seo_twitter_description',
+					'image_id'    => 'wcv_seo_twitter_image_id',
+				),
+				'facebook' => array(
+					'title'       => 'wcv_seo_facebook_title',
+					'description' => 'wcv_seo_facebook_description',
+					'image_id'    => 'wcv_seo_facebook_image_id',
+				),
+			),
+			'location'      => array(
+				'long' => 'wcv_address_latitude',
+				'lat'  => 'wcv_address_longitude',
+			),
+			'branding'      => array(
+				'banner_id' => '_wcv_store_banner_id',
+				'icon_id'   => '_wcv_store_icon_id',
+			),
+			'payout'        => array(
+				'paypal' => array( 'email' => 'pv_paypal' ),
+				'bank'   => array(
+					'account_name'   => 'wcv_bank_account_name',
+					'account_number' => 'wcv_bank_account_number',
+					'bank_name'      => 'wcv_bank_name',
+					'routing_number' => 'wcv_bank_routing_number',
+					'iban'           => 'wcv_bank_iban',
+					'bic_swift'      => 'wcv_bank_bic_swift',
+				),
+			),
+			'give_tax'      => 'wcv_give_vendor_tax',
+			'give_shipping' => 'wcv_give_vendor_shipping',
+			'commission'    => array(
+				'type'   => '_wcv_commission_type',
+				'amount' => '_wcv_commission_percent',
+				'fee'    => '_wcv_commission_fee',
+			),
+		);
+		$vendor_props     = array();
+
+		foreach ( $prop_to_meta_map as $prop => $meta ) {
+			 $vendor_props[ $prop ] = recursive_get_prop_value( $prop_to_meta_map[ $prop ], $meta, $user_id );
+		}
+
+		return $vendor_props;
+	}
+}
+
+if ( ! function_exists( 'recursive_get_prop_value' ) ) {
+
+	/**
+	 * Retrive all vendor props by Recursive
+	 *
+	 * @param $prop The property to retrieve.
+	 * @param $meta The meta key to retrieve.
+	 * @param $user_id The user id to retrieve.
+	 *
+	 * @return mixed
+	 */
+	function recursive_get_prop_value( $prop, $meta, $user_id ) {
+		if ( is_array( $prop ) ) {
+			foreach ( $prop as $meta_key => $sub_prop ) {
+				$prop[ $meta_key ] = recursive_get_prop_value( $prop[ $meta_key ], $sub_prop, $user_id );
+			}
+		} else {
+			$prop = get_user_meta( $user_id, $meta, true );
+		}
+		return $prop;
+
 	}
 }

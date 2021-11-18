@@ -192,6 +192,12 @@ use WP_User;
         if ( empty( $this->get_changes() ) ){ 
             return; 
         }
+
+        $maybe_migrate_user_meta = wcv_maybe_migrate_user_meta( $this->get_id(), $this->get_meta_key() );
+        if ( is_array( $maybe_migrate_user_meta ) ) { 
+            $this->changes = array_merge( $maybe_migrate_user_meta, $this->changes );
+        }
+
 		$this->store_data  = array_replace_recursive( $this->store_data, $this->changes ); // @codingStandardsIgnoreLine
         $this->update_vendor_data(); 
 		$this->changes = [];
