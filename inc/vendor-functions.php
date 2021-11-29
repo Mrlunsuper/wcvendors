@@ -255,7 +255,7 @@ function wcv_get_vendor_shop_name( $vendor ) {
 		$vendor = new Vendor( $vendor );
 	}
 
-	$shop_name = $vendor->get_store_name() ? $vendor->get_store_name() : $vendor->get_wp_user()->get_user_login();
+	$shop_name = $vendor->get_store_name() ? $vendor->get_store_name() : $vendor->get_wp_user()->user_login;
 	return apply_filters( 'wcvendors_get_vendor_shop_name', $shop_name, $vendor );
 }
 
@@ -363,14 +363,14 @@ if ( ! function_exists( 'wcv_get_storeurl' ) ) {
 	 */
 	function wcv_get_storeurl( $vendor_id ) {
 
-		$vendor_id = wcv_get_vendor_id( $vendor_id );
-		if ( ! $vendor_id ) {
+		$vendor      = new Vendor( $vendor_id );
+
+		if ( ! $vendor->is_vendor() ) {
 			return;
 		}
 
-		$vendor      = new Vendor( $vendor_id );
 		$slug        = $vendor->get_slug();
-		$vendor_slug = ! $slug ? $vendor->get_wp_user()->get_user_login() : $slug;
+		$vendor_slug = ! $slug ? $vendor->get_wp_user()->user_login : $slug;
 
 		if ( get_option( 'permalink_structure' ) ) {
 			$permalink = trailingslashit( get_option( 'wcvendors_vendor_shop_permalink' ) );
@@ -379,46 +379,6 @@ if ( ! function_exists( 'wcv_get_storeurl' ) ) {
 		} else {
 			return esc_url( add_query_arg( array( 'vendor_shop' => $vendor_slug ), get_post_type_archive_link( 'product' ) ) );
 		}
-	}
-}
-
-if ( ! function_exists( 'wcv_get_vendor_id' ) ) {
-	/**
-	 * Grabs the vendor ID whether a username or an int is provided
-	 * and returns the vendor_id if it's actually a vendor
-	 *
-	 * @param unknown $input
-	 *
-	 * @return unknown
-	 */
-	function wcv_get_vendor_id( $input ) {
-
-		if ( empty( $input ) ) {
-			return false;
-		}
-
-		$users = get_users(
-			array(
-				'meta_key'   => 'pv_shop_slug',
-				'meta_value' => sanitize_title( $input ),
-			)
-		);
-
-		if ( ! empty( $users ) && 1 == count( $users ) ) {
-			$vendor = $users[0];
-		} else {
-			$int_vendor = is_numeric( $input );
-			$vendor     = ! empty( $int_vendor ) ? get_userdata( $input ) : get_user_by( 'login', $input );
-		}
-
-		if ( $vendor ) {
-			$vendor_id = $vendor->ID;
-			if ( wcv_is_vendor( $vendor_id ) ) {
-				return $vendor_id;
-			}
-		}
-
-		return false;
 	}
 }
 
@@ -489,6 +449,7 @@ if ( ! function_exists( 'wcv_get_prop_map') ) {
 			'type'   => '_wcv_commission_type',
 			'amount' => '_wcv_commission_percent',
 			'fee'    => '_wcv_commission_fee',
+			'rate'   => 'pv_custom_commission_rate'
 		),
 	);
 
