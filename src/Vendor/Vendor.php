@@ -1,7 +1,7 @@
 <?php 
 
 namespace WCVendors\Vendor; 
-use WP_Query;
+use WP_User;
 
 /**
  * The Vendor Object
@@ -160,13 +160,13 @@ use WP_Query;
 
         // New Vendor, load defaults 
         if ( ! $this->id ){ 
-            $this->store_data = wcv_vendor_store_info_defaults(); 
+            $this->store_data = wcv_vendor_store_data_defaults(); 
             return;
         } 
 
         $store_data = get_user_meta( $this->get_id(), $this->get_meta_key(), true ); 
         $store_data = is_array( $store_data ) ? $store_data : array(); 
-        $store_data = wp_parse_args( $store_data, wcv_vendor_store_info_defaults() ); 
+        $store_data = wp_parse_args( $store_data, wcv_vendor_store_data_defaults() ); 
        
         $this->store_data = apply_filters( $this->get_hook_prefix() . '_store_data', $store_data, $this ); 
 
@@ -192,6 +192,8 @@ use WP_Query;
         if ( empty( $this->get_changes() ) ){ 
             return; 
         }
+
+        $this->maybe_migrate_user_meta();
 		$this->store_data  = array_replace_recursive( $this->store_data, $this->changes ); // @codingStandardsIgnoreLine
         $this->update_vendor_data(); 
 		$this->changes = [];
@@ -517,7 +519,7 @@ use WP_Query;
      */
     protected function get_payout_detail( $payout ){
         $value = null;
-		if ( array_key_exists( $payout, $this->store_data['payout'][ $payout ] ) ) {
+		if ( array_key_exists( $payout, $this->store_data['payout'] ) ) {
 			$value = isset( $this->changes['payout'][ $payout ] ) ? $this->changes['payout'][ $payout ]: $this->store_data['payout'][ $payout ];
 
 		}
@@ -532,7 +534,7 @@ use WP_Query;
 	 */
     public function get_paypal_email(){
         $paypal = $this->get_payout_detail( 'paypal' ); 
-        return $paypal->email;  
+        return $paypal['email'];  
     }
 
     /**
@@ -544,7 +546,7 @@ use WP_Query;
 	 */
     public function get_bank_details(){
         $bank_details = $this->get_payout_detail( 'bank' ); 
-        return $bank_details; 
+        return $bank_details;
     }
 
     /**
@@ -912,5 +914,48 @@ use WP_Query;
     public function set_commission( $commission ){
         $this->set_prop( 'commission', $commission ); 
     }
+
+    /**
+     * Migrate the vendor to the new system
+     *
+     * @return void
+     *
+     */
+    public function maybe_migrate_user_meta() {
+
+        if ( ! wc_string_to_bool( $this->get_wp_user()->get( 'wcv_vendor_migrated' ) ) ) {
+
+            $prop_to_meta_map = wcv_get_prop_map();
+
+            $vendor_props     = array();
+    
+            foreach ( $prop_to_meta_map as $prop => $meta ) {
+                 $vendor_props[ $prop ] =  $this->recursive_get_prop_value( $prop_to_meta_map[ $prop ], $meta);
+            }
+
+            $this->changes = array_merge( $vendor_props, $this->changes );
+    
+        }
+    }
+
+    /**
+	 * Retrive all vendor props by Recursive
+	 *
+	 * @param $prop The property to retrieve.
+	 * @param $meta The meta key to retrieve.
+	 *
+	 * @return mixed
+	 */
+	private function recursive_get_prop_value( $prop, $meta ) {
+		if ( is_array( $prop ) ) {
+			foreach ( $prop as $meta_key => $sub_prop ) {
+				$prop[ $meta_key ] = $this->recursive_get_prop_value( $prop[ $meta_key ], $sub_prop);
+			}
+		} else {
+			$prop = $this->get_wp_user()->get( $meta );
+		}
+		return $prop;
+
+	}
 
 }

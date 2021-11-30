@@ -8,6 +8,7 @@
  * @version 3.0.0
  */
 
+ use WCVendors\Vendor\Vendor;
 /**
  * The vendor store info defaults plugins can hook into this to add more data to a vendor store.
  *
@@ -89,6 +90,10 @@ function wcv_format_user_data( $vendor_id ) {
  * @param Vendor $vendor the user id to check.
  */
 function wcv_is_vendor( $vendor ) {
+
+	if ( is_numeric( $vendor ) ) {
+		$vendor = get_userdata( $vendor );
+	}
 
 	if ( is_object( $vendor ) ) {
 		if ( is_array( $vendor->roles ) ) {
@@ -243,8 +248,15 @@ if ( ! function_exists( 'wcv_set_primary_vendor_role' ) ) {
  */
 function wcv_get_vendor_shop_name( $vendor ) {
 
-	$shop_name = $vendor->get_shop_name() ? $vendor->get_shop_name : $vendor->get_wp_user()->get_user_login();
-	return apply_filters( 'wcvendors_get_vendor_shop_name', $shop_name, $vendor_id );
+	if ( is_numeric( $vendor ) ) {
+		if ( ! wcv_is_vendor( $vendor ) ) {
+			return;
+		}
+		$vendor = new Vendor( $vendor );
+	}
+
+	$shop_name = $vendor->get_store_name() ? $vendor->get_store_name() : $vendor->get_wp_user()->user_login;
+	return apply_filters( 'wcvendors_get_vendor_shop_name', $shop_name, $vendor );
 }
 
 /**
@@ -338,4 +350,109 @@ function wcv_get_vendor_from_product( $product_id ) {
 function wcv_get_avatar_url( $vendor_id ) {
 	$avatar_url = get_avatar_url( $vendor_id );
 	return apply_filters( 'wcvendors_get_avatar_url', $avatar_url, $vendor_id );
+}
+
+if ( ! function_exists( 'wcv_get_storeurl' ) ) {
+
+	/**
+	 * Retrieve the shop page for a specific vendor
+	 *
+	 * @param unknown $vendor_id
+	 *
+	 * @return string
+	 */
+	function wcv_get_storeurl( $vendor_id ) {
+
+		$vendor      = new Vendor( $vendor_id );
+
+		if ( ! $vendor->is_vendor() ) {
+			return;
+		}
+
+		$slug        = $vendor->get_slug();
+		$vendor_slug = ! $slug ? $vendor->get_wp_user()->user_login : $slug;
+
+		if ( get_option( 'permalink_structure' ) ) {
+			$permalink = trailingslashit( get_option( 'wcvendors_vendor_shop_permalink' ) );
+
+			return trailingslashit( home_url( sprintf( '/%s%s', $permalink, $vendor_slug ) ) );
+		} else {
+			return esc_url( add_query_arg( array( 'vendor_shop' => $vendor_slug ), get_post_type_archive_link( 'product' ) ) );
+		}
+	}
+}
+
+if ( ! function_exists( 'wcv_get_prop_map') ) {
+
+	/**
+	 * Get mapped vendor props with old meta keys
+	 *
+	 * @return array
+	 */
+   function wcv_get_prop_map() {
+	$prop_to_meta_map = array(
+		'store_name'    => 'pv_shop_name',
+		'info'          => 'pv_seller_info',
+		'description'   => 'pv_shop_description',
+		'company_url'   => '_wcv_company_url',
+		'slug'          => 'pv_shop_slug',
+		'phone'         => '_wcv_store_phone',
+		'email'         => 'billing_email',
+		'address'       => array(
+			'address_1' => '_wcv_store_address1',
+			'address_2' => '_wcv_store_address2',
+			'city'      => '_wcv_store_city',
+			'state'     => '_wcv_store_state',
+			'postcode'  => '_wcv_store_postcode',
+			'country'   => '_wcv_store_country',
+		),
+		'address_other' => array(),
+		'seo'           => array(
+			'title'            => 'wcv_seo_title',
+			'meta_description' => 'wcv_seo_meta_description',
+			'meta_keywords'    => 'wcv_seo_meta_keywords',
+		),
+		'social'        => array(
+			'twitter'  => array(
+				'title'       => 'wcv_seo_twitter_title',
+				'description' => 'wcv_seo_twitter_description',
+				'image_id'    => 'wcv_seo_twitter_image_id',
+			),
+			'facebook' => array(
+				'title'       => 'wcv_seo_fb_title',
+				'description' => 'wcv_seo_fb_description',
+				'image_id'    => 'wcv_seo_fb_image_id',
+			),
+		),
+		'location'      => array(
+			'long' => 'wcv_address_latitude',
+			'lat'  => 'wcv_address_longitude',
+		),
+		'branding'      => array(
+			'banner_id' => '_wcv_store_banner_id',
+			'icon_id'   => '_wcv_store_icon_id',
+		),
+		'payout'        => array(
+			'paypal' => array( 'email' => 'pv_paypal' ),
+			'bank'   => array(
+				'account_name'   => 'wcv_bank_account_name',
+				'account_number' => 'wcv_bank_account_number',
+				'bank_name'      => 'wcv_bank_name',
+				'routing_number' => 'wcv_bank_routing_number',
+				'iban'           => 'wcv_bank_iban',
+				'bic_swift'      => 'wcv_bank_bic_swift',
+			),
+		),
+		'give_tax'      => 'wcv_give_vendor_tax',
+		'give_shipping' => 'wcv_give_vendor_shipping',
+		'commission'    => array(
+			'type'   => '_wcv_commission_type',
+			'amount' => '_wcv_commission_percent',
+			'fee'    => '_wcv_commission_fee',
+			'rate'   => 'pv_custom_commission_rate'
+		),
+	);
+
+	return apply_filters( 'wcvendors_prop_map', $prop_to_meta_map );
+   }
 }
