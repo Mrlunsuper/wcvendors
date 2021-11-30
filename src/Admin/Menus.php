@@ -176,7 +176,7 @@ class Menus {
 
 		$option = 'per_page';
 		$args   = [
-			'label'   => __('Vendors','wc-vendors'),
+			'label'   => __( 'Vendors', 'wc-vendors' ),
 			'default' => apply_filters( 'wcv_venodrs_list_default_item_per_page', 20 ),
 			'option'  => 'vendor_per_page'
 		];
