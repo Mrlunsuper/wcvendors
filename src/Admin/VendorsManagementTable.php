@@ -355,9 +355,16 @@ class VendorsManagementTable extends \WP_List_Table {
 		$actions      = array(
 			'delete'         => sprintf( '<a class="delete_vendor" href="?page=%s&action=%s&vendor_id=%s&_wpnonce=%s">Delete</a>', esc_attr( $page ), 'delete', absint( $item['ID'] ), $action_nonce ),
 			'edit'           => sprintf( '<a href="%s?user_id=%s&">Edit</a>', admin_url() . 'user-edit.php', $item['ID'] ),
+		);
+
+		$pending_vendor_options = array(
 			'approve_vendor' => sprintf( '<a href="?page=%s&action=%s&vendor_id=%s&_wpnonce=%s">Approve</a>', esc_attr( $page ), 'approve_vendor', absint( $item['ID'] ), $action_nonce ),
 			'deny_vendor'    => sprintf( '<a href="?page=%s&action=%s&vendor_id=%s&_wpnonce=%s">Deny</a>', esc_attr( $page ), 'deny_vendor', absint( $item['ID'] ), $action_nonce ),
 		);
+
+		if ( wcv_is_pending_vendor( $item['ID'] ) ) {
+			$actions = array_merge( $actions, $pending_vendor_options );
+		}
 
 		return $item['user_nicename'] . $this->row_actions( $actions );
 	}

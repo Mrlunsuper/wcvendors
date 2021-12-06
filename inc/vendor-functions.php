@@ -109,13 +109,13 @@ function wcv_is_vendor( $vendor ) {
  *
  * @param int $user_id the user id to check.
  */
-function wcv_is_vendor_pending( $user_id ) {
+function wcv_is_pending_vendor( $user_id ) {
 	$current_user = get_userdata( $user_id );
 
 	if ( is_object( $current_user ) ) {
 
 		if ( is_array( $current_user->roles ) ) {
-			return in_array( 'vendor_pending', $current_user->roles, true );
+			return in_array( 'pending_vendor', $current_user->roles, true );
 		}
 	}
 
