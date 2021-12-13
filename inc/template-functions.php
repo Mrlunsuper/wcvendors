@@ -17,10 +17,11 @@ if ( ! function_exists( 'wcv_get_sold_by_link' ) ) {
 		$class   = isset( $css_class ) ? 'class="' . $css_class . '"' : '';
         $vendor = new Vendor( $vendor_id );
 		$sold_by = $vendor->is_vendor()
-			? sprintf( '<a href="%s" %s>%s</a>', $vendor->get_store_url(), $class, wcv_get_vendor_sold_by( $vendor_id ) )
+			? sprintf( '<a href="%s" %s>%s</a>', $vendor->get_store_url(), $class, wcv_get_vendor_shop_name( $vendor_id ) )
 			: get_bloginfo( 'name' );
 
 		$sold_by = apply_filters_deprecated( 'wcv_sold_by_link', array( $sold_by, $vendor_id ), '2.3.0', 'wcvendors_sold_by_link' );
+
 		return apply_filters( 'wcvendors_sold_by_link', $sold_by, $vendor_id );
 
 	}

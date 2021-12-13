@@ -10,7 +10,7 @@ class Cart {
 	/**
 	 * Init Cart hooks
 	 */
-	function init_hooks() {
+	public function init_hooks() {
 
 		if ( 'yes' == get_option( 'wcvendors_display_label_sold_by_enable', 'no' ) ) {
 			add_filter( 'woocommerce_get_item_data', array( $this, 'sold_by' ), 10, 2 );
