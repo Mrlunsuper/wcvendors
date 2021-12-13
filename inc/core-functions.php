@@ -131,3 +131,129 @@ function wcv_format_date( $sql_date, $timezone = '' ) {
 
 	return apply_filters( 'wcvendors_date_format', $date, $sql_date );
 }
+
+
+if ( ! function_exists( 'wcv_get_products_for_order' ) ) {
+	/**
+	 *
+	 *
+	 * @param unknown $order_id
+	 *
+	 * @return unknown
+	 */
+
+
+	function wcv_get_products_for_order( $order_id ) {
+		global $wpdb;
+
+		$vendor_products = array();
+
+		$results = $wpdb->get_results(
+			"
+			SELECT product_id
+			FROM {$wpdb->prefix}pv_commission
+			WHERE order_id = {$order_id}
+			AND     status != 'reversed'
+			AND     vendor_id = " . get_current_user_id() . '
+			GROUP BY product_id'
+		);
+
+		$results = apply_filters( 'wcvendors_get_vendor_products', $results );
+
+		foreach ( $results as $value ) {
+			$ids[] = $value->product_id;
+		}
+
+		return $ids;
+	}
+}
+
+if ( ! function_exists( 'wcv_sum_for_orders' ) ) {
+		/**
+		 * Sum of orders for a specific order
+		 *
+		 * @param array $order_ids
+		 * @param array $args (optional)
+		 *
+		 * @return object
+		 */
+	function wcv_sum_for_orders( array $order_ids, array $args = array(), $date_range = true ) {
+		global $wpdb;
+
+		$dates = ( $date_range ) ? wcv_orders_within_range() : array();
+
+		$defaults = array(
+			'status' => apply_filters( 'wcvendors_completed_statuses', array( 'completed', 'processing' ) ),
+		);
+
+		$args = wp_parse_args( $args, $defaults );
+
+		$sql = "
+			SELECT COUNT(order_id) as total_orders,
+			       SUM(total_due + total_shipping + tax) as line_total,
+			       SUM(qty) as qty,
+			       product_id
+
+			FROM {$wpdb->prefix}pv_commission
+
+			WHERE   order_id IN ('" . implode( "','", $order_ids ) . "')
+			AND     status != 'reversed'
+		";
+
+		if ( ! empty( $dates ) ) {
+			$sql .= "
+				AND     time >= '" . $dates['after'] . "'
+				AND     time <= '" . $dates['before'] . "'
+			";
+		}
+
+		if ( ! empty( $args['vendor_id'] ) ) {
+			$sql .= "
+				AND vendor_id = {$args['vendor_id']}
+			";
+		}
+
+		$sql .= '
+			GROUP BY order_id
+			ORDER BY time DESC;
+		';
+
+		$orders = $wpdb->get_results( $sql );
+
+		return $orders;
+	}
+}
+
+if ( ! function_exists( 'wcv_orders_within_range' ) ) {
+
+	/**
+	 * Orders for range filter function
+	 *
+	 * @return array
+	 */
+	function wcv_orders_within_range() {
+		global $start_date, $end_date;
+
+		if ( ! empty( $_POST['start_date'] ) ) {
+			WC()->session->set( 'wcv_order_start_date', strtotime( sanitize_text_field( wp_unslash( $_POST['start_date'] ) ) ) );
+		}
+
+		if ( ! empty( $_POST['end_date'] ) ) {
+			WC()->session->set( 'wcv_order_end_date', strtotime( sanitize_text_field( wp_unslash( $_POST['end_date'] ) ) ) );
+		}
+
+		$start_date = WC()->session->get( 'wcv_order_start_date', strtotime( current_time( 'Y-M' ) . '-01' ) );
+		$end_date   = WC()->session->get( 'wcv_order_end_date', strtotime( current_time( 'mysql' ) ) );
+
+		$after  = gmdate( 'Y-m-d', $start_date );
+		$before = gmdate( 'Y-m-d', strtotime( '+1 day', $end_date ) );
+
+		return apply_filters(
+			'wcvendors_orders_date_range',
+			array(
+				'after'  => $after,
+				'before' => $before,
+			)
+		);
+	}
+}

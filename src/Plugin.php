@@ -60,7 +60,7 @@ class Plugin {
 		( new PostTypes() )->init_hooks();
 		( new Install() )->init_hooks();
 		( new OrderHandler( $logger ) )->init_hooks();
-
+		( new VendorHandler() )->init_hooks();
 		$this->init_admin_classes();
 
 		if ( $this->is_request( 'frontend' ) ) {
@@ -82,6 +82,14 @@ class Plugin {
 		( new Admin\MetaBoxes() )->init_hooks();
 		( new Admin\Users() )->init_hooks();
 		( new Emails\Emails() )->init_hooks();
+
+
+		$user_id = get_current_user_id();
+
+		if ( wcv_is_vendor( $user_id ) ) {
+			( new Admin\Vendor\Menus() )->init_hook();
+		}
+		
 	}
 
 	/**

@@ -29,7 +29,8 @@ class Assets {
 	 * Enqueue the styles
 	 */
 	public function admin_styles() {
-
+		wp_register_style( 'wcv_vendors_style', WCV_PLUGIN_URL . 'assets/css/admin/wcv-vendors.css' );
+		wp_enqueue_style( 'wcv_vendors_style' );
 	}
 
 	/**
@@ -47,6 +48,24 @@ class Assets {
 		if ( in_array( $screen_id, array( 'edit-product' ), true ) ) {
 			wp_register_script( 'wcv_quick-edit', WCV_PLUGIN_URL . 'assets/js/admin/product-quick-edit.js', array( 'jquery' ), WCV_VERSION, true );
 			wp_enqueue_script( 'wcv_quick-edit' );
+		}
+
+		// Vendor Management screen.
+		if ( in_array( $screen_id, array( 'wc-vendors_page_wcv-vendors' ), true ) ) {
+			
+			wp_register_script( 'wcv_vendor-edit', WCV_PLUGIN_URL . 'assets/js/admin/vendors.js', array( 'jquery' ), WCV_VERSION, true );
+			wp_enqueue_script( 'wcv_vendor-edit' );
+
+			wp_localize_script(
+				'wcv_vendor-edit',
+				'wcv_vendors_table_params',
+				array(
+					'ajax_url'            => admin_url( 'admin-ajax.php' ),
+					'nonce'               => wp_create_nonce( 'wcv_toogle_vendor_nonce' ),
+					'confirm_bulk_delete' => __( 'Are you sure you want to delete these vendors?', 'wc-vendors' ),
+					'confirm_delete'      => __( 'Are you sure you want to delete this vendor?', 'wc-vendors' ),
+				)
+			);
 		}
 	}
 
