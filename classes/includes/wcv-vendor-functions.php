@@ -82,13 +82,20 @@ if ( ! function_exists( 'wcv_get_order_vendors_shipped_text' ) ){
         }
 
         $shipped = (array) get_post_meta( $order->get_id(), 'wc_pv_shipped', true );
-        $string  = '<h4>' . __( 'Vendors shipped', 'wc-vendors' ) . '</h4>';
+        $string  = '<div class="wcv-mark-shipped">';
+        $string  .= '<h4>' . __( 'Vendors shipped', 'wc-vendors' ) . '</h4>';
 
         foreach ( $vendors as $vendor_id ) {
-            $string .= in_array( $vendor_id, $shipped ) ? '&#10004; ' : '&#10005; ';
-            $string .= WCV_Vendors::get_vendor_shop_name( $vendor_id );
+            $string .= in_array( $vendor_id, $shipped ) ? '&#10004; ' : '&#10005; '; 
+            $string .= '<span>' . WCV_Vendors::get_vendor_shop_name( $vendor_id ) . '</span>';
+            if ( $order_edit && ! wcv_vendor_shipped( $order, $vendor_id ) ){ 
+                $mark_vendor_shipped_url  = wp_nonce_url( admin_url( 'admin-ajax.php?action=wcvendors_mark_order_vendor_shipped&order_id=' . $order->get_id() . '&vendor_id=' . $vendor_id ), 'wcvendors-mark-order-vendor-shipped' );
+                $string .= '<a class="" href="' . $mark_vendor_shipped_url .'">' . __( 'Mark shipped', 'wc-vendors') . '</a>'; 
+            }
             $string .= '<br />';
         }
+
+        $string .= '</div>';
 
         return $string;
     }
@@ -112,6 +119,24 @@ if ( ! function_exists( 'wcv_all_vendors_shipped' ) ){
         return $all_shipped;
     }
 }
+
+/**
+ * Check of all vendors have shipped for the order
+ *
+ * @param WC_Order $order The order to check
+ * @return boolean $all_shipped if all vendors have shipped
+ * 
+ * @since 2.4.0
+ * @version 2.4.0
+ */
+if ( ! function_exists( 'wcv_vendor_shipped' ) ){
+    function wcv_vendor_shipped( $order, $vendor_id ){
+        $shipped = array_filter( (array) get_post_meta( $order->get_id(), 'wc_pv_shipped', true ) );
+        $vendor_shipped = in_array( $vendor_id, $shipped ); 
+        return $vendor_shipped;
+    }
+}
+
 
 /**
  * Define the order status's that can be marked shipped
