@@ -388,12 +388,11 @@ class WCV_Product_Meta {
 				$post              = get_post( $product->get_id() );
 				$post->post_author = $vendor;
 			}
-
-			if ( isset( $_REQUEST['product_media_author_override'] ) ) {
-				$this->save_product_media( $product );
-			}
 		}
 
+		if ( isset( $_REQUEST['product_media_author_override'] ) ) {
+			$this->save_product_media( $product );
+		}
 		return $product;
 	}
 
@@ -414,6 +413,12 @@ class WCV_Product_Meta {
 		<label class="inline-edit-author-new">
 			<span class="title"><?php printf( __( '%s', 'wc-vendors' ), wcv_get_vendor_name() ); ?></span>
 			<?php echo $output; ?>
+		</label>
+		<br class="clear"/>
+		<label class="inline-edit-author-new">
+			<input name="product_media_author_override" type="checkbox"/>
+			<span class="title">Media</span>
+			<?php printf( __( 'Assign media to %s', 'wc-vendors' ), wcv_get_vendor_name() ); ?>
 		</label>
 		<?php
 	}
@@ -439,6 +444,11 @@ class WCV_Product_Meta {
 			);
 			wp_update_post( $update_vendor );
 		}
+
+		if ( isset( $_REQUEST['product_media_author_override'] ) ) {
+			$this->save_product_media( $product );
+		}
+
 	}
 
 	/**
