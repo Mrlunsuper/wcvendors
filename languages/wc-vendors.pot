@@ -1,4 +1,4 @@
-# Copyright (C) 2021 WC Vendors Marketplace
+# Copyright (C) 2022 WC Vendors Marketplace
 # This file is distributed under the same license as the WC Vendors Marketplace package.
 msgid ""
 msgstr ""
@@ -65,13 +65,13 @@ msgstr ""
 msgid "Payment total: %s"
 msgstr ""
 
-#: classes/class-install.php:161, classes/admin/class-wcv-admin-setup.php:153
+#: classes/class-install.php:161, classes/admin/class-wcv-admin-setup.php:217
 msgid "Pending %s"
 msgstr ""
 
 #. translators: The name used to refer to a vendor.
 #. translators: %s - The name used to refer to a vendor.
-#: classes/class-install.php:175, classes/admin/class-admin-reports.php:207, classes/admin/class-admin-reports.php:530, classes/admin/class-product-meta.php:364, classes/admin/class-product-meta.php:415, classes/admin/class-setup-wizard.php:352, classes/admin/class-wcv-admin-setup.php:148, classes/admin/class-wcv-admin-setup.php:365, classes/admin/class-wcv-commissions-csv-exporter.php:50, classes/admin/class-wcv-commissions-page.php:204, classes/admin/class-wcv-commissions-sum-csv-exporter.php:43, classes/admin/settings/class-wcv-settings-display.php:229, classes/admin/settings/class-wcv-settings-display.php:113, classes/admin/settings/class-wcv-settings-display.php:121
+#: classes/class-install.php:175, classes/admin/class-admin-reports.php:207, classes/admin/class-admin-reports.php:530, classes/admin/class-product-meta.php:364, classes/admin/class-product-meta.php:415, classes/admin/class-setup-wizard.php:352, classes/admin/class-wcv-admin-setup.php:212, classes/admin/class-wcv-admin-setup.php:429, classes/admin/class-wcv-commissions-csv-exporter.php:50, classes/admin/class-wcv-commissions-page.php:204, classes/admin/class-wcv-commissions-sum-csv-exporter.php:43, classes/admin/settings/class-wcv-settings-display.php:229, classes/admin/settings/class-wcv-settings-display.php:113, classes/admin/settings/class-wcv-settings-display.php:121
 msgid "%s"
 msgstr ""
 
@@ -373,7 +373,7 @@ msgstr ""
 msgid "None"
 msgstr ""
 
-#: classes/admin/class-admin-menus.php:52, classes/admin/class-admin-menus.php:53, classes/admin/class-admin-reports.php:40, classes/admin/class-wcv-admin-setup.php:330, classes/admin/views/html-vendor-meta.php:1
+#: classes/admin/class-admin-menus.php:52, classes/admin/class-admin-menus.php:53, classes/admin/class-admin-reports.php:40, classes/admin/class-wcv-admin-setup.php:394, classes/admin/views/html-vendor-meta.php:1
 msgid "WC Vendors"
 msgstr ""
 
@@ -867,84 +867,84 @@ msgstr ""
 msgid "Upload an image for the %s"
 msgstr ""
 
-#: classes/admin/class-wcv-admin-setup.php:43
+#: classes/admin/class-wcv-admin-setup.php:47
 msgid "Vendors shipped"
 msgstr ""
 
-#: classes/admin/class-wcv-admin-setup.php:70
+#: classes/admin/class-wcv-admin-setup.php:73, classes/admin/class-wcv-admin-setup.php:99
 msgid "Vendors Shipped"
 msgstr ""
 
-#: classes/admin/class-wcv-admin-setup.php:94
+#: classes/admin/class-wcv-admin-setup.php:158
 msgid "Reset WC Vendors roles "
 msgstr ""
 
-#: classes/admin/class-wcv-admin-setup.php:95
+#: classes/admin/class-wcv-admin-setup.php:159
 msgid "Reset WC Vendor Roles"
 msgstr ""
 
-#: classes/admin/class-wcv-admin-setup.php:96
+#: classes/admin/class-wcv-admin-setup.php:160
 msgid "This will reset the wcvendors roles ( vendor & pending_vendor ), back to the default capabilities."
 msgstr ""
 
-#: classes/admin/class-wcv-admin-setup.php:101
+#: classes/admin/class-wcv-admin-setup.php:165
 msgid "Reset WC Vendors "
 msgstr ""
 
-#: classes/admin/class-wcv-admin-setup.php:102
+#: classes/admin/class-wcv-admin-setup.php:166
 msgid "Reset WC Vendors Settings"
 msgstr ""
 
-#: classes/admin/class-wcv-admin-setup.php:103
+#: classes/admin/class-wcv-admin-setup.php:167
 msgid "This will reset wcvendors back to defaults. This DELETES ALL YOUR Settings."
 msgstr ""
 
-#: classes/admin/class-wcv-admin-setup.php:108, classes/admin/class-wcv-admin-setup.php:109
+#: classes/admin/class-wcv-admin-setup.php:172, classes/admin/class-wcv-admin-setup.php:173
 msgid "Remove orphaned sub orders"
 msgstr ""
 
-#: classes/admin/class-wcv-admin-setup.php:110
+#: classes/admin/class-wcv-admin-setup.php:174
 msgid "This will remove all orphaned sub orders "
 msgstr ""
 
-#: classes/admin/class-wcv-admin-setup.php:164
+#: classes/admin/class-wcv-admin-setup.php:228
 msgid "WC Vendor roles successfully reset."
 msgstr ""
 
-#: classes/admin/class-wcv-admin-setup.php:178
+#: classes/admin/class-wcv-admin-setup.php:242
 msgid "WC Vendors was successfully reset. All settings have been reset."
 msgstr ""
 
-#: classes/admin/class-wcv-admin-setup.php:207
+#: classes/admin/class-wcv-admin-setup.php:271
 msgid "Orphaned sub orders have been removed."
 msgstr ""
 
-#: classes/admin/class-wcv-admin-setup.php:284
+#: classes/admin/class-wcv-admin-setup.php:348
 msgid "All commissions marked as paid."
 msgstr ""
 
 #. translators: 1: WooCommerce 2:: five stars
-#: classes/admin/class-wcv-admin-setup.php:329
+#: classes/admin/class-wcv-admin-setup.php:393
 msgid "If you like %1$s please leave us a %2$s rating. A huge thanks in advance!"
 msgstr ""
 
-#: classes/admin/class-wcv-admin-setup.php:331
+#: classes/admin/class-wcv-admin-setup.php:395
 msgid "Thanks :)"
 msgstr ""
 
-#: classes/admin/class-wcv-admin-setup.php:383
+#: classes/admin/class-wcv-admin-setup.php:447
 msgid "%s Notifications"
 msgstr ""
 
-#: classes/admin/class-wcv-admin-setup.php:384
+#: classes/admin/class-wcv-admin-setup.php:448
 msgid "Enable %s low stock notifications"
 msgstr ""
 
-#: classes/admin/class-wcv-admin-setup.php:393
+#: classes/admin/class-wcv-admin-setup.php:457
 msgid "Enable %s out of stock notifications"
 msgstr ""
 
-#: classes/admin/class-wcv-admin-setup.php:402
+#: classes/admin/class-wcv-admin-setup.php:466
 msgid "Enable %s backorder stock notifications"
 msgstr ""
 
@@ -2751,23 +2751,23 @@ msgstr ""
 msgid "Success. The customer has been notified of your comment."
 msgstr ""
 
-#: classes/front/signup/class-vendor-signup.php:82
+#: classes/front/signup/class-vendor-signup.php:83
 msgid "ERROR"
 msgstr ""
 
-#: classes/front/signup/class-vendor-signup.php:82, classes/front/signup/views/html-vendor-signup.php:57
+#: classes/front/signup/class-vendor-signup.php:83, classes/front/signup/views/html-vendor-signup.php:57
 msgid "Please agree to the terms and conditions"
 msgstr ""
 
-#: classes/front/signup/class-vendor-signup.php:102
+#: classes/front/signup/class-vendor-signup.php:103
 msgid "Your application has been submitted."
 msgstr ""
 
-#: classes/front/signup/class-vendor-signup.php:100
+#: classes/front/signup/class-vendor-signup.php:101
 msgid "Application denied. You are an administrator."
 msgstr ""
 
-#: classes/front/signup/class-vendor-signup.php:149, classes/front/signup/class-vendor-signup.php:191, classes/front/signup/class-vendor-signup.php:203
+#: classes/front/signup/class-vendor-signup.php:150, classes/front/signup/class-vendor-signup.php:192, classes/front/signup/class-vendor-signup.php:204
 msgid "You must accept the terms and conditions to become a vendor."
 msgstr ""
 
