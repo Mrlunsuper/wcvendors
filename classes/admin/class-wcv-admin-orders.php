@@ -132,7 +132,10 @@ class WCVendors_Admin_Orders {
      * @return void
      */
     public function handle_order_shipped( $order ){ 
-
+        if ( ! is_a( $order, 'WC_Order' ) ) {
+			$order = wc_get_order( $order );
+		}
+        wcv_mark_order_shipped( $order );
     }
 
 	/**
