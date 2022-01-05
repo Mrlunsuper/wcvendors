@@ -30,7 +30,7 @@ class WCVendors_Admin_Orders {
         add_filter( 'handle_bulk_actions-edit-shop_order', array( $this, 'handle_bulk_actions' ), 10, 3 );
 
         add_action( 'woocommerce_order_actions', array( $this, 'add_order_shipped_action' ) );
- 	    add_action( 'woocommerce_order_action_wcvendors_order_shipped', array( $this, 'handle_order_shipped' ) );
+ 	    add_action( 'woocommerce_order_action_wcvendors_order_shipped', array( $this, 'handle_order_shipped' ), 10, 1 );
     }
      
     /**
@@ -107,8 +107,8 @@ class WCVendors_Admin_Orders {
             $vendor_ids = array_keys( WCV_Vendors::get_vendors_from_order( $order ) );
 
             foreach ( $vendor_ids as $vendor_id ) {
-                wcv_mark_order_shipped( $order, $vendor_id );
-                do_action( 'wcvendors_mark_shipped', $order, $vendor_id );
+                wcv_mark_vendor_shipped( $order, $vendor_id );
+                do_action( 'wcvendors_mark_order_shipped', $order, $vendor_id );
             }
 
 			do_action( 'wcvendors_bulk_order_marked_shipped', $order_id );
@@ -131,7 +131,7 @@ class WCVendors_Admin_Orders {
      *
      * @return void
      */
-    public function handle_order_shipped(){ 
+    public function handle_order_shipped( $order ){ 
 
     }
 
@@ -140,13 +140,8 @@ class WCVendors_Admin_Orders {
 	 */
 	public static function mark_order_shipped() {
 		if ( current_user_can( 'edit_shop_orders' ) && check_admin_referer( 'wcvendors-mark-order-shipped' ) && $_GET['order_id'] )  {
-
             $order  = wc_get_order( absint( wp_unslash( $_GET['order_id'] ) ) );
-            $vendor_ids = array_keys( WCV_Vendors::get_vendors_from_order( $order ) );
-
-            foreach ( $vendor_ids as $vendor_id ) {
-                wcv_mark_order_shipped( $order, $vendor_id );
-            }
+            wcv_mark_order_shipped( $order );
 		}
 
 		wp_safe_redirect( admin_url( 'edit.php?post_type=shop_order&wcvendors_order_action=order_marked_shipped&order_id='.$order->get_id() ) );
