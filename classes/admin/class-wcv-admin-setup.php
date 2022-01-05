@@ -17,7 +17,7 @@ class WCV_Admin_Setup {
 
 	public function __construct() {
 
-			// Add wcendors tools to the WooCommerce Debug tools screen.
+		// Add wcvendors tools to the WooCommerce Debug tools screen.
 		add_filter( 'woocommerce_debug_tools'                            , array( $this, 'wcvendors_tools' ) );
 
 		add_filter( 'admin_footer_text'                    , array( $this, 'admin_footer_text' ), 1   );
