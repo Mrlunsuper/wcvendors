@@ -21,8 +21,6 @@ if ( ! function_exists( 'wcv_mark_order_shipped' ) ){
 
         $shippers = (array) get_post_meta( $order->get_id(), 'wc_pv_shipped', true );
 
-        WC_Vendors::log( $shippers );
-
         // If not in the shippers array mark as shipped otherwise do nothing.
         if ( ! in_array( $vendor_id, $shippers ) ) {
 
@@ -38,8 +36,6 @@ if ( ! function_exists( 'wcv_mark_order_shipped' ) ){
             $order->add_order_note( apply_filters( 'wcvendors_vendor_shipped_note', sprintf( __( '%s has marked as shipped. ', 'wc-vendors' ), $shop_name ), $vendor_id, $shop_name ) );
 
         }
-
-        WC_Vendors::log( $shippers );
 
         update_post_meta( $order->get_id(), 'wc_pv_shipped', $shippers );
 
