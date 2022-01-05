@@ -516,13 +516,13 @@ class WCV_Admin_Reports {
 				<table class="widefat">
 					<thead>
 					<tr>
-						<th class="total_row"><?php esc_html_e( 'Date / Month', 'wc-vendors' ); ?></th>
+						<th class="total_row"><?php esc_html_e( 'Month / Date', 'wc-vendors' ); ?></th>
 						<th class="total_row"><?php esc_html_e( 'Commission Total', 'wc-vendors' ); ?></th>
 						<th class="total_row"><?php esc_html_e( 'Tax Total', 'wc-vendors' ); ?></th>
 						<th class="total_row"><?php esc_html_e( 'Shipping Total', 'wc-vendors' ); ?></th>
-						<th class="total_row"><?php esc_html_e( 'Total Due', 'wc-vendors' ); ?></th>
-						<th class="total_row"><?php esc_html_e( 'Total Paid', 'wc-vendors' ); ?></th>
 						<th class="total_row"><?php esc_html_e( 'Total Reversed', 'wc-vendors' ); ?></th>
+						<th class="total_row"><?php esc_html_e( 'Total Paid', 'wc-vendors' ); ?></th>
+						<th class="total_row"><?php esc_html_e( 'Total Due', 'wc-vendors' ); ?></th>
 					</tr>
 					</thead>
 					<tbody>
@@ -535,40 +535,39 @@ class WCV_Admin_Reports {
 					$all_reversed         = 0;
 					// @codingStandardsIgnoreStart
 					foreach ( $formatted_commission as $month => $date ) {
-						$month_total_commission = 0;
-						$month_total_due        = 0;
-						$month_total_paid       = 0;
-						$month_total_rev        = 0;
-						$month_total_shipping   = 0;
-						$month_total_tax        = 0;
+						$month_total_commission = array_sum( wp_list_pluck( $date, 'commission' ) );
+						$month_total_due        = array_sum( wp_list_pluck( $date, 'due' ) );
+						$month_total_paid       = array_sum( wp_list_pluck( $date, 'paid' ) );
+						$month_total_rev        = array_sum( wp_list_pluck( $date, 'reversed' ) );
+						$month_total_shipping   = array_sum( wp_list_pluck( $date, 'shipping' ) );
+						$month_total_tax        = array_sum( wp_list_pluck( $date, 'tax' ) );
+
+						echo '<tr>';
+						echo '<td><strong>' . date( 'M', strtotime( $month . '-01' ) ) . '</strong></td>';
+						echo '</tr>';
 						foreach ( $date as $d => $commission ) {
-							$month_total_commission += $commission['commission'];
-							$month_total_due        += $commission['due'];
-							$month_total_paid       += $commission['paid'];
-							$month_total_rev        += $commission['reversed'];
-							$month_total_shipping   += $commission['shipping'];
-							$month_total_tax        += $commission['tax'];
 
 							echo '<tr>';
 							echo '<td>' . $d . '</td>';
 							echo '<td>' . wc_price( $commission['commission'] ) . '</td>';
 							echo '<td>' . wc_price( $commission['tax'] ) . '</td>';
 							echo '<td>' . wc_price( $commission['shipping'] ) . '</td>';
-							echo '<td>' . wc_price( $commission['due'] ) . '</td>';
-							echo '<td>' . wc_price( $commission['paid'] ) . '</td>';
 							echo '<td>' . wc_price( $commission['reversed'] ) . '</td>';
-
+							echo '<td>' . wc_price( $commission['paid'] ) . '</td>';
+							echo '<td>' . wc_price( $commission['due'] ) . '</td>';
 							echo '</tr>';
 						}
 						echo '<tr class="total_row">';
-						echo '<td><strong>' . date( 'M', strtotime( $month . '-01' ) ) . '</strong></td>';
+						echo '<td> - </td>';
 						echo '<td><strong>' . wc_price( $month_total_commission ) . '</strong></td>';
 						echo '<td><strong>' . wc_price( $month_total_tax ) . '</strong></td>';
 						echo '<td><strong>' . wc_price( $month_total_shipping ) . '</strong></td>';
-						echo '<td><strong>' . wc_price( $month_total_due ) . '</strong></td>';
-						echo '<td><strong>' . wc_price( $month_total_paid ) . '</strong></td>';
 						echo '<td><strong>' . wc_price( $month_total_rev ) . '</strong></td>';
+						echo '<td><strong>' . wc_price( $month_total_paid ) . '</strong></td>';
+						echo '<td><strong>' . wc_price( $month_total_due ) . '</strong></td>';
+
 						echo '</tr>';
+
 						$all_total_commission += $month_total_commission;
 						$all_paid             += $month_total_paid;
 						$all_reversed         += $month_total_rev;
@@ -583,9 +582,9 @@ class WCV_Admin_Reports {
 					echo '<td>' . wc_price( $all_total_commission ) . '</td>';
 					echo '<td>' . wc_price( $all_tax ) . '</td>';
 					echo '<td>' . wc_price( $all_shipping ) . '</td>';
-					echo '<td>' . wc_price( $all_total_due ) . '</td>';
-					echo '<td>' . wc_price( $all_paid ) . '</td>';
 					echo '<td>' . wc_price( $all_reversed ) . '</td>';
+					echo '<td>' . wc_price( $all_paid ) . '</td>';
+					echo '<td>' . wc_price( $all_total_due ) . '</td>';
 					echo '</tr>';
 					echo '</tfoot>';
 					// @codingStandardsIgnoreEnd
@@ -641,9 +640,9 @@ class WCV_Admin_Reports {
 						<th><?php esc_html_e( 'Total Commission', 'wc-vendors' ); ?></th>
 						<th><?php esc_html_e( 'Total Tax', 'wc-vendors' ); ?></th>
 						<th><?php esc_html_e( 'Total Shipping', 'wc-vendors' ); ?></th>
-						<th><?php esc_html_e( 'Total Due', 'wc-vendors' ); ?></th>
-						<th><?php esc_html_e( 'Total Paid', 'wc-vendors' ); ?></th>
 						<th><?php esc_html_e( 'Total Reversed', 'wc-vendors' ); ?></th>
+						<th><?php esc_html_e( 'Total Paid', 'wc-vendors' ); ?></th>
+						<th><?php esc_html_e( 'Total Due', 'wc-vendors' ); ?></th>
 					</tr>
 					</thead>
 					<tbody>
@@ -664,6 +663,10 @@ class WCV_Admin_Reports {
 						$product_total_due        = 0;
 						$product_total_tax        = 0;
 						$product_total_shipping   = 0;
+
+						echo '<tr>';
+						echo '<td><strong>' . $product_name . '</strong></td>';
+						echo  '</tr>';
 						foreach ( $product_commission as $date => $commission ) {
 							$product_total_commission += $commission['commission'];
 							$product_total_paid       += $commission['paid'];
@@ -678,9 +681,9 @@ class WCV_Admin_Reports {
 							echo '<td>' . wc_price( $commission['commission'] ) . '</td>';
 							echo '<td>' . wc_price( $commission['tax'] ) . '</td>';
 							echo '<td>' . wc_price( $commission['shipping'] ) . '</td>';
-							echo '<td>' . wc_price( $commission['due'] ) . '</td>';
-							echo '<td>' . wc_price( $commission['paid'] ) . '</td>';
 							echo '<td>' . wc_price( $commission['reversed'] ) . '</td>';
+							echo '<td>' . wc_price( $commission['paid'] ) . '</td>';
+							echo '<td>' . wc_price( $commission['due'] ) . '</td>';
 							echo '</tr>';
 
 						}
@@ -691,14 +694,14 @@ class WCV_Admin_Reports {
 						$all_tax              += $product_total_tax;
 						$all_shipping         += $product_total_shipping;
 						echo '<tr>';
-						echo '<td><strong>' . $product_name . '</strong></td>';
 						echo '<td><strong>-</strong></td>';
+						echo '<td></td>';
 						echo '<td><strong>' . wc_price( $product_total_commission ) . '</strong></td>';
 						echo '<td><strong>' . wc_price( $product_total_tax ) . '</strong></td>';
 						echo '<td><strong>' . wc_price( $product_total_shipping ) . '</strong></td>';
-						echo '<td><strong>' . wc_price( $product_total_due ) . '</strong></td>';
-						echo '<td><strong>' . wc_price( $product_total_paid ) . '</strong></td>';
 						echo '<td><strong>' . wc_price( $product_total_rev ) . '</strong></td>';
+						echo '<td><strong>' . wc_price( $product_total_paid ) . '</strong></td>';
+						echo '<td><strong>' . wc_price( $product_total_due ) . '</strong></td>';
 						echo '</tr>';
 
 					}
@@ -709,9 +712,9 @@ class WCV_Admin_Reports {
 					echo '<td>' . wc_price( $all_total_commission ) . '</td>';
 					echo '<td>' . wc_price( $all_tax ) . '</td>';
 					echo '<td>' . wc_price( $all_shipping ) . '</td>';
-					echo '<td>' . wc_price( $all_total_due ) . '</td>';
-					echo '<td>' . wc_price( $all_paid ) . '</td>';
 					echo '<td>' . wc_price( $all_reversed ) . '</td>';
+					echo '<td>' . wc_price( $all_paid ) . '</td>';
+					echo '<td>' . wc_price( $all_total_due ) . '</td>';
 					echo '</tr>';
 					echo '</tfoot>';
 					// @codingStandardsIgnoreEnd
