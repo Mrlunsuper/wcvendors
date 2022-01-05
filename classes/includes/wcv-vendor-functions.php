@@ -41,3 +41,50 @@ if ( ! function_exists( 'wcv_mark_order_shipped' ) ){
 
 	}
 }
+
+
+/**
+ * Get the formatted shipped text to output on the WooCommerce order pages. 
+ *
+ * @param WC_Order $order The WooCommerce order being referenced.
+ * @param boolean $order_edit Is this the order edit screen.
+ * @return void
+ */
+if ( ! function_exists( 'wcv_get_order_vendors_shipped_text' ) ){
+    function wcv_get_order_vendors_shipped_text( $order, $order_edit = false ){ 
+
+        $vendors = WCV_Vendors::get_vendors_from_order( $order );
+        $vendors = $vendors ? array_keys( $vendors ) : array();
+        
+        if ( empty( $vendors ) ) {
+            return false;
+        }
+
+        $shipped = (array) get_post_meta( $order->get_id(), 'wc_pv_shipped', true );
+        $string  = '<h4>' . __( 'Vendors shipped', 'wc-vendors' ) . '</h4>';
+
+        foreach ( $vendors as $vendor_id ) {
+            $string .= in_array( $vendor_id, $shipped ) ? '&#10004; ' : '&#10005; ';
+            $string .= WCV_Vendors::get_vendor_shop_name( $vendor_id );
+            $string .= '<br />';
+        }
+
+        return $string;
+    }
+}
+
+/**
+ * Check of all vendors have shipped for the order
+ *
+ * @param WC_Order $order The order to check
+ * @return boolean $all_shipped if all vendors have shipped
+ */
+if ( ! function_exists( 'wcv_all_vendors_shipped' ) ){
+    function wcv_all_vendors_shipped( $order ){
+        $vendor_ids = array_keys( WCV_Vendors::get_vendors_from_order( $order ) );
+        $shipped = array_filter( (array) get_post_meta( $order->get_id(), 'wc_pv_shipped', true ) );
+        $all_shipped = empty( array_diff( $vendor_ids, $shipped ) );
+
+        return $all_shipped;
+    }
+}

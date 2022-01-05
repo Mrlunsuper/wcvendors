@@ -34,7 +34,7 @@ class WCVendors_Admin_Orders {
      * @param WC_Order $order the order we are viewing.
      */
     public function add_vendor_shipped_details( $order ) {
-		echo $this->get_vendors_shipped_text($order);
+		echo wcv_get_order_vendors_shipped_text($order);
 	}
 
 	
@@ -46,12 +46,10 @@ class WCVendors_Admin_Orders {
 	 */
 	public function append_mark_shipped( $actions, $order ) { 
 
-        $this->all_vendors_shipped( $order );
-
-		if ( $order->has_status( array( 'processing', 'completed' ) ) &&  ! $this->all_vendors_shipped( $order ) ) {
+		if ( $order->has_status( array( 'processing', 'completed' ) ) &&  ! wcv_all_vendors_shipped( $order ) ) {
 			$actions['wcvendors_mark_shipped'] = array(
 				'url'    => wp_nonce_url( admin_url( 'admin-ajax.php?action=wcvendors_mark_order_shipped&order_id=' . $order->get_id() ), 'wcvendors-mark-order-shipped' ),
-				'name'   => __( 'Mark Shipped', 'wc-vendors' ). $this->get_vendors_shipped_text( $order ),
+				'name'   => __( 'Mark Shipped', 'wc-vendors' ). wcv_get_order_vendors_shipped_text( $order ),
 				'action' => 'wcvendors_mark_shipped',
 			);
 		}
@@ -60,52 +58,8 @@ class WCVendors_Admin_Orders {
 	}
 
     /**
-     * Get the formatted shipped text to output in various places. 
-     *
-     * @param WC_Order $order The WooCommerce order being referenced.
-     * @param boolean $order_edit Is this the order edit screen.
-     * @return void
+     * AJAX Methods 
      */
-	public function get_vendors_shipped_text( $order, $order_edit = false ){ 
-
-		$vendors = WCV_Vendors::get_vendors_from_order( $order );
-		$vendors = $vendors ? array_keys( $vendors ) : array();
-		
-		if ( empty( $vendors ) ) {
-			return false;
-		}
-
-		$shipped = (array) get_post_meta( $order->get_id(), 'wc_pv_shipped', true );
-		$string  = '<h4>' . __( 'Vendors shipped', 'wc-vendors' ) . '</h4>';
-
-		foreach ( $vendors as $vendor_id ) {
-			$string .= in_array( $vendor_id, $shipped ) ? '&#10004; ' : '&#10005; ';
-			$string .= WCV_Vendors::get_vendor_shop_name( $vendor_id );
-			$string .= '<br />';
-		}
-
-		return $string;
-	}
-
-    /**
-     * Check of all vendors have shipped for the order
-     *
-     * @param WC_Order $order The order to check
-     * @return boolean $all_shipped if all vendors have shipped
-     */
-    public function all_vendors_shipped( $order ){
-        $vendor_ids = array_keys( WCV_Vendors::get_vendors_from_order( $order ) );
-        $shipped = array_filter( (array) get_post_meta( $order->get_id(), 'wc_pv_shipped', true ) );
-
-        if ( empty( array_diff( $vendor_ids, $shipped ) ) ){
-            WC_Vendors::log( 'Order ID: #'. $order->get_id(). ' all shipped.' );
-        }
-
-        $all_shipped = empty( array_diff( $vendor_ids, $shipped ) );
-
-        return $all_shipped;
-
-    }
 
 	/**
 	 * Mark an order shipped for all vendors.
@@ -126,6 +80,9 @@ class WCVendors_Admin_Orders {
 		exit;
 	}
 
+    /**
+     * Notices 
+     */
     
 	/**
 	 * Show confirmation message that order has been marked shipped.
