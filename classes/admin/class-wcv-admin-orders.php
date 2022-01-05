@@ -12,7 +12,6 @@
 
 class WCVendors_Admin_Orders { 
 
-
     public function __construct() {
         $this->init_hooks();
     }
@@ -26,8 +25,14 @@ class WCVendors_Admin_Orders {
 		add_action( 'woocommerce_admin_order_data_after_shipping_address', array( $this, 'add_vendor_shipped_details'), 10, 2 );
 		add_action( 'woocommerce_admin_order_actions', array( $this, 'append_mark_shipped' )   , 10, 2 );
 		add_action( 'wp_ajax_wcvendors_mark_order_shipped', array( __CLASS__, 'mark_order_shipped' ) );
-    }
 
+        add_filter( 'bulk_actions-edit-shop_order', array( $this, 'add_bulk_order_shipped_action' ) );
+        add_filter( 'handle_bulk_actions-edit-shop_order', array( $this, 'handle_bulk_actions' ), 10, 3 );
+
+        add_action( 'woocommerce_order_actions', array( $this, 'add_order_shipped_action' ) );
+ 	    add_action( 'woocommerce_order_action_wcvendors_order_shipped', array( $this, 'handle_order_shipped' ) );
+    }
+     
     /**
      * Add the vendor shipped information to the order edit screen. 
      *
@@ -46,7 +51,7 @@ class WCVendors_Admin_Orders {
 	 */
 	public function append_mark_shipped( $actions, $order ) { 
 
-		if ( $order->has_status( array( 'processing', 'completed' ) ) &&  ! wcv_all_vendors_shipped( $order ) ) {
+		if ( $order->has_status( wcv_marked_shipped_order_status() ) &&  ! wcv_all_vendors_shipped( $order ) ) {
 			$actions['wcvendors_mark_shipped'] = array(
 				'url'    => wp_nonce_url( admin_url( 'admin-ajax.php?action=wcvendors_mark_order_shipped&order_id=' . $order->get_id() ), 'wcvendors-mark-order-shipped' ),
 				'name'   => __( 'Mark Shipped', 'wc-vendors' ). wcv_get_order_vendors_shipped_text( $order ),
@@ -58,8 +63,77 @@ class WCVendors_Admin_Orders {
 	}
 
     /**
-     * AJAX Methods 
+	 * Add action to bulk actions on order list
+	 *
+	 * @param   array $actions
+	 *
+	 * @return  array $actions Modified bulk actions
+	 * @since   2.4.0
+	 * @version 2.4.0
+	 */
+	public function add_bulk_order_shipped_action( $actions ) {
+		$actions['wcvendors_bulk_order_shipped'] = __( 'Mark shipped', 'wc-vendors' );
+		return $actions;
+	}
+
+	/**
+	 * Add action to calculate commissions on single order edit screen
+	 *
+	 * @param array $actions The order actions 
+	 *
+	 * @since 2.4.0
+	 * @version 2.4.0 
+	 */
+	public function add_order_shipped_action( $actions ) {
+		$actions['wcvendors_order_shipped'] = __( 'Mark shipped', 'wc-vendors' );
+		return $actions;
+	} 
+
+
+    /**
+     * Bulk action handler 
      */
+    public function handle_bulk_actions( $redirect_to, $action, $ids ){ 
+
+        $ids     = apply_filters( 'wcvendors_bulk_order_action_ids', array_reverse( array_map( 'absint', $ids ) ), $action, 'order' );
+
+		foreach ( $ids as $order_id ) {
+			$order = wc_get_order( $order_id );
+
+			if ( ! in_array( $order->get_status(), wcv_marked_shipped_order_status() ) ) {
+				continue;
+			}
+
+            $vendor_ids = array_keys( WCV_Vendors::get_vendors_from_order( $order ) );
+
+            foreach ( $vendor_ids as $vendor_id ) {
+                wcv_mark_order_shipped( $order, $vendor_id );
+                do_action( 'wcvendors_mark_shipped', $order, $vendor_id );
+            }
+
+			do_action( 'wcvendors_bulk_order_marked_shipped', $order_id );
+		}
+
+        $redirect_to = add_query_arg(
+            array(
+                'post_type'              => 'shop_order',
+                'wcvendors_order_action' => 'orders_marked_shipped',
+                'ids'                    => join( ',', $ids ),
+            ),
+            $redirect_to
+        );
+        return esc_url_raw( $redirect_to );
+
+    }
+    
+    /**
+     * Mark the order shipped from the order edit screen
+     *
+     * @return void
+     */
+    public function handle_order_shipped(){ 
+
+    }
 
 	/**
 	 * Mark an order shipped for all vendors.
@@ -68,8 +142,7 @@ class WCVendors_Admin_Orders {
 		if ( current_user_can( 'edit_shop_orders' ) && check_admin_referer( 'wcvendors-mark-order-shipped' ) && $_GET['order_id'] )  {
 
             $order  = wc_get_order( absint( wp_unslash( $_GET['order_id'] ) ) );
-            $vendors    = WCV_Vendors::get_vendors_from_order( $order );
-            $vendor_ids = array_keys( $vendors );
+            $vendor_ids = array_keys( WCV_Vendors::get_vendors_from_order( $order ) );
 
             foreach ( $vendor_ids as $vendor_id ) {
                 wcv_mark_order_shipped( $order, $vendor_id );
@@ -97,6 +170,7 @@ class WCVendors_Admin_Orders {
 
         $action    = wc_clean( wp_unslash( $_REQUEST['wcvendors_order_action'] ) ); // WPCS: input var ok, CSRF ok.
         $order_id  = absint( wp_unslash( $_REQUEST['order_id'] ) ); // WPCS: input var ok, CSRF ok.
+        $ids  = absint( wp_unslash( $_REQUEST['ids'] ) ); // WPCS: input var ok, CSRF ok.
 
         switch ($action) {
             case 'order_marked_shipped':
@@ -105,7 +179,12 @@ class WCVendors_Admin_Orders {
                     echo '<div class="updated"><p>' . esc_html( $message ) . '</p></div>';
                 }
                 break;
-            
+            case 'orders_marked_shipped':
+                    if ( $ids ){ 
+                        $message = sprintf( _n( 'Orders marked shipped for all %s.', 'Orders marked shipped for all %s.', wcv_get_vendor_name( false, false ), 'wc-vendors' ), wcv_get_vendor_name( false, false ) );
+                        echo '<div class="updated"><p>' . esc_html( $message ) . '</p></div>';
+                    }
+                    break;
             default:
                 # code...
                 break;

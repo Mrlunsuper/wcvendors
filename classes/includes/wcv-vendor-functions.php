@@ -88,3 +88,12 @@ if ( ! function_exists( 'wcv_all_vendors_shipped' ) ){
         return $all_shipped;
     }
 }
+
+/**
+ * Define the order status's that can be marked shipped
+ *
+ * @return array $status's array of order status's 
+ */
+function wcv_marked_shipped_order_status(){
+    return apply_filters( 'wcvendors_order_mark_shipped_statuses', array( 'completed', 'processing' ) );
+}
