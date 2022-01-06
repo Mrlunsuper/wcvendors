@@ -20,6 +20,11 @@
 if ( ! function_exists( 'wcv_mark_vendor_shipped' ) ){
 	function wcv_mark_vendor_shipped( $order, $vendor_id ){
 
+        // Only process orders with the required order status.
+        if ( ! $order->has_status( wcv_marked_shipped_order_status() ) ){ 
+            return; 
+        }
+
         $shippers = (array) get_post_meta( $order->get_id(), 'wc_pv_shipped', true );
 
         // If not in the shippers array mark as shipped otherwise do nothing.
