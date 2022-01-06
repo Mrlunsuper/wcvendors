@@ -88,7 +88,7 @@ if ( ! function_exists( 'wcv_get_order_vendors_shipped_text' ) ){
         foreach ( $vendors as $vendor_id ) {
             $string .= in_array( $vendor_id, $shipped ) ? '&#10004; ' : '&#10005; '; 
             $string .= '<span>' . WCV_Vendors::get_vendor_shop_name( $vendor_id ) . '</span>';
-            if ( $order_edit && ! wcv_vendor_shipped( $order, $vendor_id ) ){ 
+            if ( $order_edit && $order->has_status( wcv_marked_shipped_order_status() ) && ! wcv_vendor_shipped( $order, $vendor_id ) ){ 
                 $mark_vendor_shipped_url  = wp_nonce_url( admin_url( 'admin-ajax.php?action=wcvendors_mark_order_vendor_shipped&order_id=' . $order->get_id() . '&vendor_id=' . $vendor_id ), 'wcvendors-mark-order-vendor-shipped' );
                 $string .= '<a class="" href="' . $mark_vendor_shipped_url .'">' . __( 'Mark shipped', 'wc-vendors') . '</a>'; 
             }
