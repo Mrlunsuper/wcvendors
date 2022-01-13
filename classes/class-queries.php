@@ -70,7 +70,7 @@ class WCV_Queries {
 			GROUP BY product_id'
 		);
 
-		$results = apply_filters('wcvendors_get_vendor_products', $results);
+		$results = apply_filters( 'wcvendors_get_vendor_products', $results );
 
 		foreach ( $results as $value ) {
 			$vendor_products[] = $value->product_id;
