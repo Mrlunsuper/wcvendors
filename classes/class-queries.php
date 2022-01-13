@@ -73,10 +73,10 @@ class WCV_Queries {
 		$results = apply_filters('wcvendors_get_vendor_products', $results);
 
 		foreach ( $results as $value ) {
-			$ids[] = $value->product_id;
+			$vendor_products[] = $value->product_id;
 		}
 
-		return $ids;
+		return $vendor_products;
 	}
 
 	/**
