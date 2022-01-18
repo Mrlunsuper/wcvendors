@@ -72,6 +72,10 @@ class WCV_Queries {
 
 		$results = apply_filters( 'wcvendors_get_vendor_products', $results );
 
+		if ( empty( $results ) ) {
+			return array();
+		}
+
 		foreach ( $results as $value ) {
 			$vendor_products[] = $value->product_id;
 		}
