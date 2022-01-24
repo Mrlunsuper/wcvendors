@@ -254,6 +254,11 @@ class WCV_Orders {
 		foreach ( $orders as $i => $order ) {
 			$i          = $order->order_id;
 			$order      = wc_get_order( $i );
+
+			if ( is_bool( $order ) ) {
+				continue;
+			}
+
 			$order_date = $order->get_date_created();
 
 			$shipping_first_name = $order->get_shipping_first_name();
@@ -299,6 +304,17 @@ class WCV_Orders {
 
 				if ( $item['product_id'] != $product_id && $item['variation_id'] != $product_id ) {
 					continue;
+				}
+
+				$refund_total = $order->get_total_refunded_for_item( $item->get_id() );
+				$refund_qty   = $order->get_qty_refunded_for_item( $item->get_id() );
+
+				if ( ( $refund_total > 0 ) && $item->get_product_id() == $product_id || $item->get_variation_id() == $product_id ) {
+					$items[ $i ]['refund'] = array(
+						'total' => $refund_total,
+						'qty'   => absint( $refund_qty ),
+					);
+
 				}
 
 				$items[ $i ]['items'][]   = $item;

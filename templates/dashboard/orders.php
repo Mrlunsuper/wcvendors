@@ -69,6 +69,11 @@ if ( function_exists( 'wc_print_notices' ) ) {
 		foreach ( $order_summary as $order ) :
 
 			$order = wc_get_order( $order->order_id );
+
+			if ( is_bool( $order ) ) {
+				continue;
+			}
+
 			$order_id = $order->get_id();
 			$valid_items = WCV_Queries::get_products_for_order( $order_id );
 			$valid = array();
@@ -162,21 +167,30 @@ if ( function_exists( 'wc_print_notices' ) ) {
 				<td colspan="5">
 					<?php
 					$product_id = '';
+					$refunded   = array();
 					foreach ( $valid as $key => $item ) :
 
 						// Get variation data if there is any.
 						$variation_detail = ! empty( $item['variation_id'] ) ? WCV_Orders::get_variation_data( $item['variation_id'] ) : '';
-
+						$refunded_total   =  $order->get_total_refunded_for_item( $item->get_id() );
 						?>
 						<?php echo $item['qty'] . 'x ' . $item['name']; ?>
 						<?php
 						if ( ! empty( $variation_detail ) ) {
 							echo '<br />' . $variation_detail;
 						}
+
+						if ( $refunded_total > 0 ) {
+							$refunded_qty = $order->get_qty_refunded_for_item( $item->get_id() );
+							$refunded[]   = $refunded_qty . ' x ' . wc_price( $refunded_total ) . ' x ' . $item['name'];
+						}
 						?>
 
-
 					<?php endforeach; ?>
+					<?php if ( ! empty( $refunded ) ) : ?>
+						<br/><strong><?php echo esc_html__( 'Refuned:', 'wc-vendors' ); ?></strong>
+						<?php echo implode( ', ', $refunded ); ?>
+					<?php endif; ?>
 
 				</td>
 			</tr>

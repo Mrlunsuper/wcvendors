@@ -58,25 +58,28 @@ class WCV_Queries {
 	public static function get_products_for_order( $order_id ) {
 		global $wpdb;
 
-		$vendor_products = array();
+		$vendor_products      = array();
+		$vendor_id            = get_current_user_id();
+		$hide_reversed_orders = wc_string_to_bool( get_option( 'wcvendors_dashboard_orders_show_reversed_orders', 'no' ) );
+		$sql                  = "SELECT product_id FROM {$wpdb->prefix}pv_commission WHERE order_id = {$order_id} ";
 
-		$results = $wpdb->get_results(
-			"
-			SELECT product_id
-			FROM {$wpdb->prefix}pv_commission
-			WHERE order_id = {$order_id}
-			AND     status != 'reversed'
-			AND     vendor_id = " . get_current_user_id() . '
-			GROUP BY product_id'
-		);
-
-		$results = apply_filters('wcvendors_get_vendor_products', $results);
-
-		foreach ( $results as $value ) {
-			$ids[] = $value->product_id;
+		if ( false === $hide_reversed_orders ) {
+			$sql .= " AND status != 'reversed'";
 		}
 
-		return $ids;
+		$sql    .= " AND vendor_id = {$vendor_id} GROUP BY product_id ";
+		$result  = $wpdb->get_results( $sql ); // WPCS: unprepared SQL ok.
+		$results = apply_filters( 'wcvendors_get_vendor_products', $result );
+
+		if ( empty( $results ) ) {
+			return array();
+		}
+
+		foreach ( $results as $value ) {
+			$vendor_products[] = $value->product_id;
+		}
+
+		return $vendor_products;
 	}
 
 	/**
@@ -93,7 +96,7 @@ class WCV_Queries {
 		if ( empty( $product_ids ) ) {
 			return false;
 		}
-
+		$hide_reversed_orders = wc_string_to_bool( get_option( 'wcvendors_dashboard_orders_show_reversed_orders', 'no' ) );
 		$dates = self::orders_within_range();
 
 		$defaults = array(
@@ -111,9 +114,11 @@ class WCV_Queries {
 			FROM {$wpdb->prefix}pv_commission as order_items
 			WHERE   product_id IN ('" . implode( "','", $product_ids ) . "')
 			AND 	time >= '" . $args['dates']['after'] . "'
-			AND 	time <= '" . $args['dates']['before'] . "'
-			AND     status != 'reversed'
-		";
+			AND 	time <= '" . $args['dates']['before'] . "'";
+
+		if ( false === $hide_reversed_orders ) {
+			$sql .= " AND status != 'reversed'";
+		}
 
 		if ( ! empty( $args['vendor_id'] ) ) {
 			$sql .= "
