@@ -278,7 +278,7 @@ class WCV_Vendor_Dashboard {
 		}
 
 		$vendor_summary = $this->format_product_details( $vendor_products );
-		$order_summary  = WCV_Queries::get_orders_for_products( $products );
+		$order_summary  = WCV_Queries::get_orders_for_products( $products, array( 'vendor_id' => $user_id ) );
 
 		$providers      = array();
 		$provider_array = array();
