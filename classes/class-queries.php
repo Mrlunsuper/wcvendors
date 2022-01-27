@@ -60,10 +60,10 @@ class WCV_Queries {
 
 		$vendor_products      = array();
 		$vendor_id            = get_current_user_id();
-		$hide_reversed_orders = wc_string_to_bool( get_option( 'wcvendors_dashboard_orders_show_reversed_orders', 'no' ) );
+		$show_reversed_orders = wcv_is_show_reversed_order();
 		$sql                  = "SELECT product_id FROM {$wpdb->prefix}pv_commission WHERE order_id = {$order_id} ";
 
-		if ( false === $hide_reversed_orders ) {
+		if ( ! $show_reversed_orders ) {
 			$sql .= " AND status != 'reversed'";
 		}
 
@@ -96,8 +96,8 @@ class WCV_Queries {
 		if ( empty( $product_ids ) ) {
 			return false;
 		}
-		$hide_reversed_orders = wc_string_to_bool( get_option( 'wcvendors_dashboard_orders_show_reversed_orders', 'no' ) );
-		$dates = self::orders_within_range();
+		$show_reversed_orders = wcv_is_show_reversed_order();
+		$dates                = self::orders_within_range();
 
 		$defaults = array(
 			'status' => apply_filters( 'wcvendors_completed_statuses', array( 'completed', 'processing' ) ),
@@ -116,7 +116,7 @@ class WCV_Queries {
 			AND 	time >= '" . $args['dates']['after'] . "'
 			AND 	time <= '" . $args['dates']['before'] . "'";
 
-		if ( false === $hide_reversed_orders ) {
+		if ( ! $show_reversed_orders ) {
 			$sql .= " AND status != 'reversed'";
 		}
 
