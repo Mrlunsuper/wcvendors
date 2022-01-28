@@ -76,8 +76,8 @@ if ( ! class_exists( 'WCVendors_Settings_Commission', false ) ) :
 							'type'    => 'number',
 						),
 						array(
-							'title'   => __( 'Show reversed orders', 'wcvendors-pro' ),
-							'desc'    => __( 'Show reversed / refunded orders on the order dashboard', 'wcvendors-pro' ),
+							'title'   => __( 'Show reversed orders', 'wc-vendors' ),
+							'desc'    => __( 'Show reversed / refunded orders on the order dashboard', 'wc-vendors' ),
 							'id'      => 'wcvendors_dashboard_orders_show_reversed_orders',
 							'type'    => 'checkbox',
 							'default' => 'no',
