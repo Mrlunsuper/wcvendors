@@ -168,11 +168,19 @@ if ( function_exists( 'wc_print_notices' ) ) {
 					<?php
 					$product_id = '';
 					$refunded   = array();
+					$order_refunded = $order->get_total_refunded();
+					$is_full_refuned = $order_refunded == $order->get_total();
+
 					foreach ( $valid as $key => $item ) :
 
 						// Get variation data if there is any.
 						$variation_detail = ! empty( $item['variation_id'] ) ? WCV_Orders::get_variation_data( $item['variation_id'] ) : '';
 						$refunded_total   =  $order->get_total_refunded_for_item( $item->get_id() );
+
+						if ( $is_full_refuned ) {
+							$refunded_total = $item['line_total'];
+						}
+
 						?>
 						<?php echo $item['qty'] . 'x ' . $item['name']; ?>
 						<?php
@@ -181,7 +189,7 @@ if ( function_exists( 'wc_print_notices' ) ) {
 						}
 
 						if ( $refunded_total > 0 ) {
-							$refunded_qty = $order->get_qty_refunded_for_item( $item->get_id() );
+							$refunded_qty = $is_full_refuned ? ( -1 * $item['qty'] ) : $order->get_qty_refunded_for_item( $item->get_id() );
 							$refunded[]   = $refunded_qty . ' x ' . wc_price( $refunded_total ) . ' x ' . $item['name'];
 						}
 						?>

@@ -300,6 +300,7 @@ class WCV_Orders {
 			}
 
 			$items[ $i ]['total_qty'] = 0;
+			$is_full_refuned          = $order->get_total_refunded() == $order->get_total();
 			foreach ( $order->get_items() as $line_id => $item ) {
 
 				if ( $item['product_id'] != $product_id && $item['variation_id'] != $product_id ) {
@@ -309,6 +310,10 @@ class WCV_Orders {
 				$refund_total = $order->get_total_refunded_for_item( $item->get_id() );
 				$refund_qty   = $order->get_qty_refunded_for_item( $item->get_id() );
 
+				if ( $is_full_refuned ) {
+					$refund_total = $item['line_total'];
+					$refund_qty   = $item['qty'];
+				}
 				if ( ( $refund_total > 0 ) && $item->get_product_id() == $product_id || $item->get_variation_id() == $product_id ) {
 					$items[ $i ]['refund'] = array(
 						'total' => $refund_total,
