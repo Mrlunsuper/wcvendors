@@ -189,13 +189,13 @@ if ( function_exists( 'wc_print_notices' ) ) {
 						}
 
 						if ( $refunded_total > 0 ) {
-							$refunded_qty = $is_full_refunded ? ( -1 * $item['qty'] ) : $order->get_qty_refunded_for_item( $item->get_id() );
-							$refunded[]   = $refunded_qty . ' x ' . wc_price( $refunded_total ) . ' x ' . $item['name'];
+							$refunded_qty = $is_full_refunded ? $item['qty'] : $order->get_qty_refunded_for_item( $item->get_id() );
+							$refunded[]   = absint( $refunded_qty ) . 'x ' . wc_price( $refunded_total ) . ' - ' . $item['name'];
 						}
 						?>
 
 					<?php endforeach; ?>
-					<?php if ( ! empty( $refunded ) ) : ?>
+					<?php if ( ! empty( $refunded ) && $show_reversed ) : ?>
 						<br/><strong><?php echo esc_html__( 'Refunded:', 'wc-vendors' ); ?></strong>
 						<?php echo implode( ', ', $refunded ); ?>
 					<?php endif; ?>
