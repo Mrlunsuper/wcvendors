@@ -61,7 +61,7 @@ if ( function_exists( 'wc_print_notices' ) ) {
 
 	<?php
 	if ( ! empty( $order_summary ) ) :
-		$totals = 0;
+		$totals  = 0;
 		$user_id = get_current_user_id();
 		?>
 
@@ -74,9 +74,9 @@ if ( function_exists( 'wc_print_notices' ) ) {
 				continue;
 			}
 
-			$order_id = $order->get_id();
-			$valid_items = WCV_Queries::get_products_for_order( $order_id );
-			$valid = array();
+			$order_id       = $order->get_id();
+			$valid_items    = WCV_Queries::get_products_for_order( $order_id );
+			$valid          = array();
 			$needs_shipping = false;
 
 			$items = $order->get_items();
@@ -104,10 +104,10 @@ if ( function_exists( 'wc_print_notices' ) ) {
 				<?php endif; ?>
 				<td>
 					<?php
-					$sum    = WCV_Queries::sum_for_orders( array( $order_id ), array( 'vendor_id' => get_current_user_id() ) );
+					$sum   = WCV_Queries::sum_for_orders( array( $order_id ), array( 'vendor_id' => get_current_user_id() ) );
 					$total = 0;
 					if ( 0 < count( $sum ) ) {
-						$total  = $sum[0]->line_total;
+						$total   = $sum[0]->line_total;
 						$totals += $total;
 					}
 					echo wc_price( $total );
@@ -166,18 +166,18 @@ if ( function_exists( 'wc_print_notices' ) ) {
 			<tr id="view-items-<?php echo $order_id; ?>" style="display:none;">
 				<td colspan="5">
 					<?php
-					$product_id = '';
-					$refunded   = array();
-					$order_refunded = $order->get_total_refunded();
-					$is_full_refuned = $order_refunded == $order->get_total();
+					$product_id       = '';
+					$refunded         = array();
+					$order_refunded   = $order->get_total_refunded();
+					$is_full_refunded = $order_refunded == $order->get_total();
 
 					foreach ( $valid as $key => $item ) :
 
 						// Get variation data if there is any.
 						$variation_detail = ! empty( $item['variation_id'] ) ? WCV_Orders::get_variation_data( $item['variation_id'] ) : '';
-						$refunded_total   =  $order->get_total_refunded_for_item( $item->get_id() );
+						$refunded_total   = $order->get_total_refunded_for_item( $item->get_id() );
 
-						if ( $is_full_refuned ) {
+						if ( $is_full_refunded ) {
 							$refunded_total = $item['line_total'];
 						}
 
@@ -189,14 +189,14 @@ if ( function_exists( 'wc_print_notices' ) ) {
 						}
 
 						if ( $refunded_total > 0 ) {
-							$refunded_qty = $is_full_refuned ? ( -1 * $item['qty'] ) : $order->get_qty_refunded_for_item( $item->get_id() );
+							$refunded_qty = $is_full_refunded ? ( -1 * $item['qty'] ) : $order->get_qty_refunded_for_item( $item->get_id() );
 							$refunded[]   = $refunded_qty . ' x ' . wc_price( $refunded_total ) . ' x ' . $item['name'];
 						}
 						?>
 
 					<?php endforeach; ?>
 					<?php if ( ! empty( $refunded ) ) : ?>
-						<br/><strong><?php echo esc_html__( 'Refuned:', 'wc-vendors' ); ?></strong>
+						<br/><strong><?php echo esc_html__( 'Refunded:', 'wc-vendors' ); ?></strong>
 						<?php echo implode( ', ', $refunded ); ?>
 					<?php endif; ?>
 
@@ -205,17 +205,20 @@ if ( function_exists( 'wc_print_notices' ) ) {
 
 			<?php if ( class_exists( 'WC_Shipment_Tracking' ) ) : ?>
 
-			<?php if ( is_array( $providers ) ) : ?>
+				<?php if ( is_array( $providers ) ) : ?>
 				<tr id="view-tracking-<?php echo $order_id; ?>" style="display:none;">
 					<td colspan="5">
 						<div class="order-tracking">
 							<?php
 							wc_get_template(
-								'shipping-form.php', array(
-								'order_id'   => $order_id,
-								'product_id' => $product_id,
-								'providers'  => $providers,
-							), 'wc-vendors/orders/shipping/', wcv_plugin_dir . 'templates/orders/shipping/'
+								'shipping-form.php',
+								array(
+									'order_id'   => $order_id,
+									'product_id' => $product_id,
+									'providers'  => $providers,
+								),
+								'wc-vendors/orders/shipping/',
+								wcv_plugin_dir . 'templates/orders/shipping/'
 							);
 							?>
 						</div>
@@ -237,7 +240,7 @@ if ( function_exists( 'wc_print_notices' ) ) {
 
 		<tr>
 			<td colspan="4"
-			    style="text-align:center;"><?php _e( 'You have no orders during this period.', 'wc-vendors' ); ?></td>
+				style="text-align:center;"><?php _e( 'You have no orders during this period.', 'wc-vendors' ); ?></td>
 		</tr>
 
 	<?php endif; ?>
