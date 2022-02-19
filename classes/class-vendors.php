@@ -215,24 +215,29 @@ class WCV_Vendors {
 			}
 		}
 
-		// Add remainders on end to admin
-		$discount = $order->get_total_discount();
-		$shipping = round( ( $order->get_total_shipping() - $shipping_given ), 2 );
-		$tax      = round( $order->get_total_tax() - $tax_given, 2 );
-		$total    = ( $tax + $shipping ) - $discount;
+		$shipping_methods = WC()->shipping->load_shipping_methods();
+		$vendor_shipping = isset( $shipping_methods['wcv_pro_vendor_shipping'] ) ? true : false;
+		if ( ! $vendor_shipping ) {
 
-		if ( $group ) {
-			$r_total                   = round( $receiver[1]['total'], 2 );
-			$receiver[1]['commission'] = round( $receiver[1]['commission'], 2 ) - round( $discount, 2 );
-			$receiver[1]['shipping']   = $shipping;
-			$receiver[1]['tax']        = $tax;
-			$receiver[1]['total']      = $r_total + round( $total, 2 );
-		} else {
-			$r_total                           = round( $receiver[1][ $key ]['total'], 2 );
-			$receiver[1][ $key ]['commission'] = round( $receiver[1][ $key ]['commission'], 2 ) - round( $discount, 2 );
-			$receiver[1][ $key ]['shipping']   = ( $order->get_total_shipping() - $shipping_given );
-			$receiver[1][ $key ]['tax']        = $tax;
-			$receiver[1][ $key ]['total']      = $r_total + round( $total, 2 );
+			// Add remainders on end to admin
+			$discount = $order->get_total_discount();
+			$shipping = round( ( $order->get_total_shipping() - $shipping_given ), 2 );
+			$tax      = round( $order->get_total_tax() - $tax_given, 2 );
+			$total    = ( $tax + $shipping ) - $discount;
+
+			if ( $group ) {
+				$r_total                   = round( $receiver[1]['total'], 2 );
+				$receiver[1]['commission'] = round( $receiver[1]['commission'], 2 ) - round( $discount, 2 );
+				$receiver[1]['shipping']   = $shipping;
+				$receiver[1]['tax']        = $tax;
+				$receiver[1]['total']      = $r_total + round( $total, 2 );
+			} else {
+				$r_total                           = round( $receiver[1][ $key ]['total'], 2 );
+				$receiver[1][ $key ]['commission'] = round( $receiver[1][ $key ]['commission'], 2 ) - round( $discount, 2 );
+				$receiver[1][ $key ]['shipping']   = ( $order->get_total_shipping() - $shipping_given );
+				$receiver[1][ $key ]['tax']        = $tax;
+				$receiver[1][ $key ]['total']      = $r_total + round( $total, 2 );
+			}
 		}
 
 		// Reset the array keys
