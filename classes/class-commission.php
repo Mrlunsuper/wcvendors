@@ -41,7 +41,9 @@ class WCV_Commission {
 		$refund_items = $refund->get_items();
 
 		foreach ( $refund_items as $refund_item ) {
-			$product_ids[] = $refund_item['product_id'];
+			$item              = new WC_Order_Item_Product( $refund_item );
+			$refund_product_id = 0 !== $item->get_variation_id() ? $item->get_variation_id() : $item->get_product_id();
+			$product_ids[]     = $refund_product_id;
 		}
 
 		foreach ( $product_ids as $product_id ) {
