@@ -14,7 +14,7 @@ class WCV_Orders {
 	/**
 	 * __construct()
 	 */
-	function __construct() {
+	public function __construct() {
 
 		$this->can_view_orders        = wc_string_to_bool( get_option( 'wcvendors_capability_orders_enabled', 'no' ) );
 		$this->can_export_csv         = wc_string_to_bool( get_option( 'wcvendors_capability_orders_export', 'no' ) );
@@ -311,16 +311,13 @@ class WCV_Orders {
 				}
 
 				$refund_total = $order->get_total_refunded_for_item( $item->get_id() );
-				$refund_qty   = $order->get_qty_refunded_for_item( $item->get_id() );
 
 				if ( $is_full_refunded ) {
 					$refund_total = $item['line_total'];
-					$refund_qty   = $item['qty'];
 				}
 				if ( ( $refund_total > 0 ) && $item->get_product_id() == $product_id || $item->get_variation_id() == $product_id ) {
 					$items[ $i ]['refund'] = array(
 						'total' => $refund_total,
-						'qty'   => absint( $refund_qty ),
 					);
 
 				}

@@ -189,8 +189,7 @@ if ( function_exists( 'wc_print_notices' ) ) {
 						}
 
 						if ( $refunded_total > 0 ) {
-							$refunded_qty = $is_full_refunded ? $item['qty'] : $order->get_qty_refunded_for_item( $item->get_id() );
-							$refunded[]   = absint( $refunded_qty ) . 'x ' . wc_price( $refunded_total ) . ' - ' . $item['name'];
+							$refunded[]   = wc_price( $refunded_total ) . ' - ' . $item['name'];
 						}
 						?>
 
