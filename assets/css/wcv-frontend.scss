@@ -985,13 +985,17 @@ table {
 .hidden {
   display: none;
 }
+.dashicons {
+  vertical-align: middle;
+}
 .wcv_vendorslist {
   margin-left: 0;
-  .vendor_list {
 
+  .vendor_list {
     & .vendors_list--shop-link {
       margin-top: 10px;
       font-size: 14px;
+      display: inline-block;
     }
     & .vendors_list--shop-address, .vendors_list--shop-phone {
       & span {
@@ -1067,6 +1071,7 @@ table {
   justify-content: space-between;
   align-items: center;
   margin-bottom: 30px;
+  position: relative;
 
   .wcv-vendor-list-switch {
     color: #000000;
@@ -1083,6 +1088,37 @@ table {
       margin-right: 0;
     }
   }
+    
+  & #search-vendors-toggle-checkbox {
+    display: none;
+    &:checked + .wcv-vendor-list-search {
+      display: block;
+    }
+  }
+  & .search-vendors-toggle-button {
+    display: none;
+  }
+  & form {
+    margin-bottom: 0;
+  }
+    @media screen and (max-width: 767px) {
+
+      & .wcv-vendor-list-search{
+        position: absolute;
+        display: none;
+        top: 0;
+        transform: translateY(50%);
+        background-color: #fff;
+        border: 1px solid #eee;
+        border-radius: 4px;
+        padding: 10px;
+        width: 100%;
+        z-index: 1;
+      }
+      & .search-vendors-toggle-button {
+        display: block;
+      }
+    }
 }
 .vendor-search-result-text {
   margin-bottom: 20px;
