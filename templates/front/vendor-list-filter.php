@@ -1,0 +1,48 @@
+<?php
+/**
+ * Vendor List Filter Template
+ *
+ * This template can be overridden by copying it to yourtheme/wc-vendors/front/vendor-list-filter.php
+ */
+
+$active_class = array(
+	'grid' => '',
+	'list' => '',
+);
+if ( 'grid' === $display_mode ) {
+	$active_class['grid'] = 'active';
+} else {
+	$active_class['list'] = 'active';
+}
+?>
+<div class="wcv-vendor-list-filter">
+	<div class="wcv-vendor-list-search">
+		<form action="" method="GET">
+			<input type="text" value="<?php echo $search_term; ?>" name="search" id="wcv-vendor-list-search" placeholder="<?php esc_attr_e( 'Search for a vendor', 'wc-vendors' ); ?>" />
+			<input type="submit" value="<?php esc_attr_e( 'Search', 'wc-vendors' ); ?>" />
+		</form>
+	</div>
+	<div class="wcv-vendor-list-switch">
+		<a href="<?php echo esc_url( add_query_arg( array( 'display_mode' => 'grid' ) ) ); ?>" class="wcv-vendor-list-switch-item <?php echo esc_attr( $active_class['grid'] ); ?>" data-view="grid" title="<?php esc_attr_e( 'Grid', 'wcvendors-pro' ); ?>"><span class="dashicons dashicons-grid-view"></span></a>
+		<a href="<?php echo esc_url( add_query_arg( array( 'display_mode' => 'list' ) ) ); ?>" class="wcv-vendor-list-switch-item <?php echo esc_attr( $active_class['list'] ); ?>" data-view="list" title="<?php esc_attr_e( 'List', 'wcvendors-pro' ); ?>"><span class="dashicons dashicons-menu-alt"></span></a>
+	</div>
+</div>
+<?php if ( $search_term ) : ?>
+<div class="vendor-search-result-text">
+	<?php
+	if ( $vendors > 0 ) {
+		printf(
+			/* translators: %s: total vendors */
+			esc_html__( '%s vendors found', 'wc-vendors' ),
+			'<span class="vendor-search-result-count">' . esc_html( $vendors ) . '</span>'
+		);
+	} else {
+		esc_html_e( 'No vendors found', 'wc-vendors' );
+	}
+	?>
+	<!-- Clear search button -->
+	<a href="<?php echo esc_url( remove_query_arg( 'search' ) ); ?>" class="vendor-search-clear-button">
+		<span class="dashicons dashicons-no-alt"></span>
+	</a>
+</div>
+<?php endif; ?>
