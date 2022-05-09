@@ -189,13 +189,17 @@ if ( ! class_exists( 'WCVendors_Settings_Display', false ) ) :
 				);
 
 			} else {
-				$avatar_source = array(
-					'gravatar' => __( 'Gravatar', 'wc-vendors' ),
+				$avatar_defaults = array(
+					'mystery'          => __( 'Mystery Person', 'wc-vendors' ),
+					'blank'            => __( 'Blank', 'wc-vendors' ),
+					'gravatar_default' => __( 'Gravatar Logo', 'wc-vendors' ),
+					'identicon'        => __( 'Identicon (Generated)', 'wc-vendors' ),
+					'wavatar'          => __( 'Wavatar (Generated)', 'wc-vendors' ),
+					'monsterid'        => __( 'MonsterID (Generated)', 'wc-vendors' ),
+					'retro'            => __( 'Retro (Generated)', 'wc-vendors' ),
 				);
 
-				if ( class_exists( 'WCVendors_Pro' ) ) {
-					$avatar_source = apply_filters( 'wcvendors_avatar_source', $avatar_source );
-				}
+				$avatar_source = apply_filters( 'wcvendors_avatar_source', $avatar_defaults );
 
 				$settings = apply_filters(
 					'wcvendors_settings_display_general',
@@ -330,14 +334,14 @@ if ( ! class_exists( 'WCVendors_Settings_Display', false ) ) :
 							'id'   => 'shop_options',
 						),
 						array(
-							'title' => __( 'List Settings', 'wc-vendors' ),
+							'title' => __( 'Vendors List Settings', 'wc-vendors' ),
 							'type'  => 'title',
 							'desc'  => __( 'These settings for vendors list page.', 'wc-vendors' ),
 							'id'    => 'vendors_list_options',
 						),
 						array(
 							'title'   => __( 'List Display', 'wc-vendors' ),
-							'desc'    => sprintf( __( 'Choose default display for %s list', 'wc-vendors' ), wcv_get_vendor_name( true, false ) ),
+							'desc'    => sprintf( __( 'Select default display for %s list', 'wc-vendors' ), wcv_get_vendor_name( true, false ) ),
 							'id'      => 'wcvendors_display_vendors_list_type',
 							'default' => 'grid',
 							'type'    => 'select',
@@ -348,8 +352,8 @@ if ( ! class_exists( 'WCVendors_Settings_Display', false ) ) :
 							),
 						),
 						array(
-							'title'   => __( 'Vendors Avatar Source', 'wc-vendors' ),
-							'desc'    => sprintf( __( 'Select source for %s avatar', 'wc-vendors' ), wcv_get_vendor_name( true, false ) ),
+							'title'   => __( 'Default Avatar', 'wc-vendors' ),
+							'desc'    => sprintf( __( 'Select avatar for %s', 'wc-vendors' ), wcv_get_vendor_name( true, false ) ),
 							'id'      => 'wcvendors_display_vendors_avatar_source',
 							'default' => 'gravatar',
 							'type'    => 'select',

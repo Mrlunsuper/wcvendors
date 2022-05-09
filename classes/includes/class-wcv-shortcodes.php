@@ -823,39 +823,9 @@ class WCV_Shortcodes {
 	private function get_vendor_avatar( $vendor ) {
 		$vendor_id                  = $vendor->ID;
 		$avatar_source              = get_option( 'wcvendors_display_vendors_avatar_source' );
-		$site_default_avatar        = get_option( 'avatar_default' );
-		$site_default_avatar_rating = get_option( 'avatar_rating' );
-		$vendor_avatar              = '';
 		$avatar_size                = apply_filters( 'wcvendors_vendor_avatar_size', '200' );
 
-		if ( 'gravatar' === $avatar_source ) {
-			$vendor_avatar = get_avatar(
-				$vendor_id,
-				$avatar_size,
-				$site_default_avatar,
-				$vendor->pv_shop_name,
-				array(
-					'class'  => 'wcv-gravatar',
-					'rating' => $site_default_avatar_rating,
-				)
-			);
-		} elseif ( 'store_icon' === $avatar_source ) {
-			$store_icon_id = get_user_meta( $vendor_id, '_wcv_store_icon_id', true );
-			if ( $store_icon_id ) {
-				$vendor_avatar = wp_get_attachment_image( $store_icon_id, $avatar_size, false, array( 'alt' => $vendor->pv_shop_name ) );
-			} else {
-				$vendor_avatar = get_avatar(
-					$vendor_id,
-					$avatar_size,
-					$site_default_avatar,
-					$vendor->pv_shop_name,
-					array(
-						'class'  => 'wcv-gravatar',
-						'rating' => $site_default_avatar_rating,
-					)
-				);
-			}
-		}
+		$vendor_avatar = get_avatar( $vendor_id, $avatar_size, $avatar_source, '', array( 'class' => 'wcv-avatar' ) );
 		return apply_filters( 'wcvendors_vendor_avatar', $vendor_avatar, $vendor_id );
 
 	}

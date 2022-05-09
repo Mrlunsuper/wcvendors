@@ -5,7 +5,7 @@
  * This template can be overridden by copying it to yourtheme/wc-vendors/front/vendors-list.php
  *
  * @author        Jamie Madden, WC Vendors
- * @package       WCVendors/Templates/Emails/HTML
+ * @package       WCVendors/Templates/Front
  * @version       2.0.0
  * @version       2.4.2 - More responsive
  *
