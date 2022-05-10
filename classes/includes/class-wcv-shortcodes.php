@@ -36,6 +36,12 @@ class WCV_Shortcodes {
 		// Show the sold by label based on the product page
 		add_shortcode( 'wcv_sold_by', array( $this, 'wcv_sold_by' ) );
 
+		// Vendor list actions
+		add_action( 'wcvendors_before_vendor_list', 'wcv_before_vendor_list', 10, 1 );
+		add_action( 'wcvendors_after_vendor_list', 'wcv_after_vendor_list' );
+		add_action( 'wcvendors_vendor_list_filter', 'wcv_vendor_list_filter', 10, 3 );
+		add_action( 'wcvendors_vendor_list_loop', 'wcv_vendor_list_loop', 10, 1 );
+
 	}
 
 	public static function get_vendor( $slug ) {
@@ -737,39 +743,39 @@ class WCV_Shortcodes {
 
 		ob_start();
 		wc_get_template(
-			'vendor-list-filter.php',
+			'vendor-list.php',
 			array(
-				'display_mode' => $list_display_type,
-				'search_term'  => $search_term,
-				'vendors'      => $total_vendors_paged,
+				'display_mode'  => $list_display_type,
+				'search_term'   => $search_term,
+				'vendors_count' => $total_vendors_paged,
+				'vendors'       => $paged_vendors,
+
 			),
 			'wc-vendors/front/',
 			wcv_plugin_dir . 'templates/front/'
 		);
-		$html .= ob_get_clean();
-		ob_start();
 		// Loop through all vendors and output a simple link to their vendor pages.
-		foreach ( $paged_vendors as $vendor ) {
-			$vendor_avatar = $this->get_vendor_avatar( $vendor );
-			$store_phone  = get_user_meta( $vendor->ID, '_wcv_store_phone', true );
-			$store_address = get_user_meta( $vendor->ID, '_wcv_store_address1', true );
-			wc_get_template(
-				'vendor-list.php',
-				array(
-					'shop_link'        => WCV_Vendors::get_vendor_shop_page( $vendor->ID ),
-					'shop_name'        => $vendor->pv_shop_name,
-					'vendor_id'        => $vendor->ID,
-					'shop_description' => $vendor->pv_shop_description,
-					'avatar'           => $vendor_avatar,
-					'phone'            => $store_phone ? $store_phone : __( 'Not available', 'wc-vendors' ),
-					'address'          => $store_address ? $store_address : __( 'Not available', 'wc-vendors' ),
-				),
-				'wc-vendors/front/',
-				wcv_plugin_dir . 'templates/front/'
-			);
-		} // End foreach
+		// foreach ( $paged_vendors as $vendor ) {
+		// $vendor_avatar = $this->get_vendor_avatar( $vendor );
+		// $store_phone  = get_user_meta( $vendor->ID, '_wcv_store_phone', true );
+		// $store_address = get_user_meta( $vendor->ID, '_wcv_store_address1', true );
+		// wc_get_template(
+		// 'vendor-list-loop.php',
+		// array(
+		// 'shop_link'        => WCV_Vendors::get_vendor_shop_page( $vendor->ID ),
+		// 'shop_name'        => $vendor->pv_shop_name,
+		// 'vendor_id'        => $vendor->ID,
+		// 'shop_description' => $vendor->pv_shop_description,
+		// 'avatar'           => $vendor_avatar,
+		// 'phone'            => $store_phone ? $store_phone : __( 'Not available', 'wc-vendors' ),
+		// 'address'          => $store_address ? $store_address : __( 'Not available', 'wc-vendors' ),
+		// ),
+		// 'wc-vendors/front/',
+		// wcv_plugin_dir . 'templates/front/'
+		// );
+		// } // End foreach
 
-		$html .= sprintf( '<ul class="wcv_vendorslist %s">%s</ul>', $list_display_type, ob_get_clean() );
+		$html .= ob_get_clean();
 
 		if ( $total_vendors > $total_vendors_paged ) {
 			$html        .= '<div class="wcv_pagination">';
@@ -814,20 +820,6 @@ class WCV_Shortcodes {
 		$sold_by = wcv_get_sold_by_link( $vendor_id, 'wcvendors_cart_sold_by_meta' );
 
 		return apply_filters( 'wcvendors_cart_sold_by_meta', $sold_by_label, get_the_ID(), $vendor_id ) . '&nbsp;' . apply_filters( 'wcvendors_cart_sold_by_meta_separator', $sold_by_separator, get_the_ID(), $vendor_id ) . '&nbsp;' . $sold_by . '<br/>';
-	}
-	/**
-	 * Get vendors avatar url
-	 *
-	 * @param  int $vendor_id The vendor id.
-	 */
-	private function get_vendor_avatar( $vendor ) {
-		$vendor_id                  = $vendor->ID;
-		$avatar_source              = get_option( 'wcvendors_display_vendors_avatar_source' );
-		$avatar_size                = apply_filters( 'wcvendors_vendor_avatar_size', '200' );
-
-		$vendor_avatar = get_avatar( $vendor_id, $avatar_size, $avatar_source, '', array( 'class' => 'wcv-avatar' ) );
-		return apply_filters( 'wcvendors_vendor_avatar', $vendor_avatar, $vendor_id );
-
 	}
 
 }

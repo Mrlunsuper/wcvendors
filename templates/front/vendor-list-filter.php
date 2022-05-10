@@ -32,11 +32,11 @@ if ( 'grid' === $display_mode ) {
 <?php if ( $search_term ) : ?>
 <div class="vendor-search-result-text">
 	<?php
-	if ( $vendors > 0 ) {
+	if ( $vendors_count > 0 ) {
 		printf(
 			/* translators: %s: total vendors */
 			esc_html__( '%s vendors found', 'wc-vendors' ),
-			'<span class="vendor-search-result-count">' . esc_html( $vendors ) . '</span>'
+			'<span class="vendor-search-result-count">' . esc_html( $vendors_count ) . '</span>'
 		);
 	} else {
 		esc_html_e( 'No vendors found', 'wc-vendors' );

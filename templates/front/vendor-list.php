@@ -20,15 +20,30 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 ?>
-<div class="vendor_list">
-	<div class="vendor_list_avatar">
-		<?php echo $avatar; ?>
-	</div>
-	<div class="vendor_list_info">
-		<h3 class="vendor_list--shop-name"><?php echo esc_html( $shop_name ); ?></h3>
-		<small class="vendors_list--shop-phone"><span class="dashicons dashicons-smartphone"></span><span><?php echo esc_html( $phone ); ?></span></small> <br/>
-		<small class="vendors_list--shop-address"><span class="dashicons dashicons-location"></span><span><?php echo esc_html( $address ); ?></span></small><br/>
-		<a class="button vendors_list--shop-link" href="<?php echo esc_url( $shop_link ); ?>"><?php esc_html_e( 'Visit Store', 'wc-vendors' ); ?></a>
-	</div>
-
-</div>
+<?php
+	/**
+	 * wcvendors_before_vendor_list_loop hook.
+	 * @hooked wcvendors_before_vendor_list_loop - 10
+	 */
+	do_action( 'wcvendors_vendor_list_filter', $display_mode, $search_term, $vendors_count );
+?>
+<?php
+	/**
+	 * wcvendors_before_vendor_list hook.
+	 * @hooked wcvendors_before_vendor_list - 10
+	 */
+	do_action( 'wcvendors_before_vendor_list', $display_mode );
+?>
+	<?php
+		/**
+		 * wcvendors_before_vendor_list_loop hook.
+		 * @hooked wcvendors_before_vendor_list_loop - 10
+		 */
+		do_action( 'wcvendors_vendor_list_loop', $vendors );
+	?>
+<?php
+	/**
+	 * wcvendors_after_vendor_list hook.
+	 * @hooked wcvendors_after_vendor_list - 10
+	 */
+	do_action( 'wcvendors_after_vendor_list' );
