@@ -39,7 +39,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		 * wcvendors_before_vendor_list_loop hook.
 		 * @hooked wcvendors_before_vendor_list_loop - 10
 		 */
-		do_action( 'wcvendors_vendor_list_loop', $vendors );
+		do_action( 'wcvendors_vendor_list_loop', $vendors_list );
 	?>
 <?php
 	/**

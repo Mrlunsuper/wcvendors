@@ -275,6 +275,7 @@ if ( ! function_exists( 'wcv_vendor_list_loop' ) ) {
 	function wcv_vendor_list_loop( $vendors ) {
 		ob_start();
 		foreach ( $vendors as $vendor ) {
+
 			$vendor_avatar = wcv_get_vendor_avatar( $vendor );
 			$store_phone   = get_user_meta( $vendor->ID, '_wcv_store_phone', true );
 			$store_address = get_user_meta( $vendor->ID, '_wcv_store_address1', true );

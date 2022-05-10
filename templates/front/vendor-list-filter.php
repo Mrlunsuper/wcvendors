@@ -19,9 +19,9 @@ if ( 'grid' === $display_mode ) {
 	<label for="search-vendors-toggle-checkbox" class="button search-vendors-toggle-button" title="<?php esc_attr_e( 'Search vendors', 'wc-vendors' ); ?>"><span class="dashicons dashicons-search"></span></label>
 	<input type="checkbox" id="search-vendors-toggle-checkbox" class="search-vendors-toggle-checkbox" />
 	<div class="wcv-vendor-list-search">
-		<form action="" method="GET">
+		<form action="" method="GET" class="wcv-form">
 			<input type="text" value="<?php echo $search_term; ?>" name="search" id="wcv-vendor-list-search" placeholder="<?php esc_attr_e( 'Search for a vendor', 'wc-vendors' ); ?>" />
-			<input type="submit" value="<?php esc_attr_e( 'Search', 'wc-vendors' ); ?>" />
+			<input type="submit" class="wcv-button" value="<?php esc_attr_e( 'Search', 'wc-vendors' ); ?>" />
 		</form>
 	</div>
 	<div class="wcv-vendor-list-switch">

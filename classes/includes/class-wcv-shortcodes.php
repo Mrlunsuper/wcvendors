@@ -727,6 +727,7 @@ class WCV_Shortcodes {
 			'order'      => $order,
 			'offset'     => $offset,
 			'number'     => $per_page,
+			'fields'     => 'all_with_meta',
 		);
 
 		if ( 'yes' === $has_products ) {
@@ -748,7 +749,7 @@ class WCV_Shortcodes {
 				'display_mode'  => $list_display_type,
 				'search_term'   => $search_term,
 				'vendors_count' => $total_vendors_paged,
-				'vendors'       => $paged_vendors,
+				'vendors_list'  => $paged_vendors,
 
 			),
 			'wc-vendors/front/',
