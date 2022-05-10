@@ -251,7 +251,9 @@ if ( ! function_exists( 'wcv_before_vendor_list' ) ) {
 	 * @param string $display_mode - display mode.
 	 */
 	function wcv_before_vendor_list( $display_mode ) {
-		echo sprintf( apply_filters( 'wcvendors_vendor_list_open', '<ul class="wcv_vendorslist %s">' ), esc_attr( $display_mode ) );
+		$css_class = array( $display_mode );
+		$css_class = apply_filters( 'wcv_before_vendor_list_css_class', $css_class );
+		echo sprintf( apply_filters( 'wcvendors_vendor_list_open', '<ul class="wcv_vendorslist %s">' ), esc_attr( implode( ' ', $css_class ) ) );
 	}
 }
 
