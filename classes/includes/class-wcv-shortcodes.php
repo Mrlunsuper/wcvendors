@@ -754,26 +754,6 @@ class WCV_Shortcodes {
 			'wc-vendors/front/',
 			wcv_plugin_dir . 'templates/front/'
 		);
-		// Loop through all vendors and output a simple link to their vendor pages.
-		// foreach ( $paged_vendors as $vendor ) {
-		// $vendor_avatar = $this->get_vendor_avatar( $vendor );
-		// $store_phone  = get_user_meta( $vendor->ID, '_wcv_store_phone', true );
-		// $store_address = get_user_meta( $vendor->ID, '_wcv_store_address1', true );
-		// wc_get_template(
-		// 'vendor-list-loop.php',
-		// array(
-		// 'shop_link'        => WCV_Vendors::get_vendor_shop_page( $vendor->ID ),
-		// 'shop_name'        => $vendor->pv_shop_name,
-		// 'vendor_id'        => $vendor->ID,
-		// 'shop_description' => $vendor->pv_shop_description,
-		// 'avatar'           => $vendor_avatar,
-		// 'phone'            => $store_phone ? $store_phone : __( 'Not available', 'wc-vendors' ),
-		// 'address'          => $store_address ? $store_address : __( 'Not available', 'wc-vendors' ),
-		// ),
-		// 'wc-vendors/front/',
-		// wcv_plugin_dir . 'templates/front/'
-		// );
-		// } // End foreach
 
 		$html .= ob_get_clean();
 
