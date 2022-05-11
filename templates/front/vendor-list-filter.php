@@ -3,6 +3,16 @@
  * Vendor List Filter Template
  *
  * This template can be overridden by copying it to yourtheme/wc-vendors/front/vendor-list-filter.php
+ *
+ * @author        Jamie Madden, WC Vendors
+ * @package       WCVendors/Templates/Front
+ * @version       2.4.2
+ * @version       2.4.2 - More responsive
+ *
+ * Template Variables available
+ * $display_mode : Vendor list display mode grid or list
+ * $search_term : The search term to use for filtering
+ * $vendors_count : The total number of vendors
  */
 
 $active_class = array(

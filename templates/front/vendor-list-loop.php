@@ -2,11 +2,11 @@
 /**
  * Vendor List Template
  *
- * This template can be overridden by copying it to yourtheme/wc-vendors/front/vendors-list.php
+ * This template can be overridden by copying it to yourtheme/wc-vendors/front/vendors-list-loop.php
  *
  * @author        Jamie Madden, WC Vendors
  * @package       WCVendors/Templates/Front
- * @version       2.0.0
+ * @since         2.4.2
  * @version       2.4.2 - More responsive
  *
  *  Template Variables available
@@ -14,6 +14,9 @@
  *  $shop_description : pv_shop_description (completely sanitized)
  *  $shop_link : the vendor shop link
  *  $vendor_id  : current vendor id for customization
+ *  $avatar : the vendor avatar
+ *  $phone : the vendor store phone number
+ *  $address : the vendor store address
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

@@ -252,8 +252,10 @@ if ( ! function_exists( 'wcv_before_vendor_list' ) ) {
 	 */
 	function wcv_before_vendor_list( $display_mode ) {
 		$css_class = array( $display_mode );
-		$css_class = apply_filters( 'wcv_before_vendor_list_css_class', $css_class );
-		echo sprintf( apply_filters( 'wcvendors_vendor_list_open', '<ul class="wcv_vendorslist %s">' ), esc_attr( implode( ' ', $css_class ) ) );
+		$css_class = apply_filters( 'wcvendors_vendor_list_open_class', $css_class );
+		$css_class = array_map( 'strtolower', $css_class );
+		$css_class = implode( ' ', $css_class );
+		echo sprintf( apply_filters( 'wcvendors_vendor_list_open', '<ul class="wcv_vendorslist %s">' ), esc_attr( $css_class ) );
 	}
 }
 
@@ -276,7 +278,7 @@ if ( ! function_exists( 'wcv_vendor_list_loop' ) ) {
 		ob_start();
 		foreach ( $vendors as $vendor ) {
 
-			$vendor_avatar = wcv_get_vendor_avatar( $vendor );
+			$vendor_avatar = wcv_get_vendor_avatar( $vendor->ID );
 			$store_phone   = get_user_meta( $vendor->ID, '_wcv_store_phone', true );
 			$store_address = get_user_meta( $vendor->ID, '_wcv_store_address1', true );
 			wc_get_template(
