@@ -264,7 +264,7 @@ WC Vendors Marketplace does not work with multisite WordPress. There are no plan
 
 == Changelog ==
 
-== Version 2.4.2 - 16th May 2022 ==
+== Version 2.4.2 - 19th May 2022 ==
 
 * Updated: Dev tools (#842)
 * Fixed: Vendor menu shows on Admin dashboard (#844)
