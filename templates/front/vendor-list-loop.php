@@ -25,10 +25,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 ?>
 <div class="vendor_list">
 	<div class="vendor_list_avatar">
-		<?php echo $avatar; ?>
+		<a href="<?php echo esc_url( $shop_link ); ?>"><?php echo $avatar; ?></a>
 	</div>
 	<div class="vendor_list_info">
-		<h3 class="vendor_list--shop-name"><?php echo esc_html( $shop_name ); ?></h3>
+		<a href="<?php echo esc_url( $shop_link ); ?>"><h3 class="vendor_list--shop-name"><?php echo esc_html( $shop_name ); ?></h3></a>
 		<small class="vendors_list--shop-phone"><span class="dashicons dashicons-smartphone"></span><span><?php echo esc_html( $phone ); ?></span></small> <br/>
 		<small class="vendors_list--shop-address"><span class="dashicons dashicons-location"></span><span><?php echo esc_html( $address ); ?></span></small><br/>
 		<a class="button vendors_list--shop-link" href="<?php echo esc_url( $shop_link ); ?>"><?php esc_html_e( 'Visit Store', 'wc-vendors' ); ?></a>
