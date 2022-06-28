@@ -120,6 +120,10 @@ class WCV_Product_Meta {
 
 		global $wp_meta_boxes;
 		$wp_meta_boxes['product']['normal']['core']['authordiv']['title'] = wcv_get_vendor_name();
+		$wp_meta_boxes['product']['normal']['core']['authordiv']['args']  = array(
+			'__block_editor_compatible_meta_box' => true,
+			'__back_compat_meta_box'             => false,
+		);
 	}
 
 
