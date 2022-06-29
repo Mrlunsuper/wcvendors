@@ -473,8 +473,13 @@ class WCV_Product_Meta {
 		$post       = get_post( $product_id );
 		$vendor     = $post->post_author;
 
-		$attachment_ids   = $product->get_gallery_image_ids( 'edit' );
-		$attachment_ids[] = intval( $product->get_image_id( 'edit' ) );
+		$attachment_ids        = $product->get_gallery_image_ids( 'edit' );
+		$product_main_image_id = $product->get_image_id( 'edit' );
+
+		if ( $product_main_image_id ) {
+			$attachment_ids[] = $product_main_image_id;
+		}
+
 		if ( $product->is_downloadable() ) {
 			$download_files = $product->get_downloads();
 			foreach ( $download_files as $download_id => $file ) {
@@ -482,6 +487,10 @@ class WCV_Product_Meta {
 				$media_id         = attachment_url_to_postid( $file_url );
 				$attachment_ids[] = $media_id;
 			}
+		}
+
+		if ( empty( $attachment_ids ) ) {
+			return;
 		}
 
 		foreach ( $attachment_ids as $id ) {
