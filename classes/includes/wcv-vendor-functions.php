@@ -161,7 +161,7 @@ if ( ! function_exists( 'wcv_get_vendor_avatar' ) ) {
 		$avatar_size   = apply_filters( 'wcvendors_vendor_avatar_size', 200 );
 
 		$vendor_avatar = get_avatar( $vendor_id, $avatar_size, $avatar_source, '', array( 'class' => 'wcv-avatar' ) );
-		return apply_filters( 'wcvendors_vendor_avatar', $vendor_avatar, $vendor_id );
+		return apply_filters( 'wcvendors_vendor_avatar', $vendor_avatar, $vendor_id, $avatar_size, $avatar_source );
 
 	}
 }
