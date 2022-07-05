@@ -1,6 +1,6 @@
 // Load the dependencies
 var gulp = require('gulp'),
-    sass = require('gulp-sass'),
+    sass = require('gulp-sass')(require('node-sass')),
     autoprefixer = require('gulp-autoprefixer'),
     minifycss = require('gulp-clean-css'),
     jshint = require('gulp-jshint'),
