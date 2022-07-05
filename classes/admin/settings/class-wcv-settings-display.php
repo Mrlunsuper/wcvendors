@@ -336,7 +336,7 @@ if ( ! class_exists( 'WCVendors_Settings_Display', false ) ) :
 						array(
 							'title' => __( 'Vendors List Settings', 'wc-vendors' ),
 							'type'  => 'title',
-							'desc'  => __( 'These settings for vendors list page.', 'wc-vendors' ),
+							'desc'  => __( 'These settings are for the vendors list page.', 'wc-vendors' ),
 							'id'    => 'vendors_list_options',
 						),
 						array(
