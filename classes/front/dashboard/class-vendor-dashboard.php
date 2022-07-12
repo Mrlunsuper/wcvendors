@@ -46,6 +46,8 @@ class WCV_Vendor_Dashboard {
 		) {
 			wp_enqueue_style( 'wcv_frontend_style', wcv_assets_url . 'css/wcv-frontend.css' );			
 		}
+
+		wp_enqueue_style( 'wcv_vendor_store_style', wcv_assets_url . 'css/wcv-store.css' );
 	}
 
 	public function save_vendor_settings() {
@@ -278,7 +280,7 @@ class WCV_Vendor_Dashboard {
 		}
 
 		$vendor_summary = $this->format_product_details( $vendor_products );
-		$order_summary  = WCV_Queries::get_orders_for_products( $products );
+		$order_summary  = WCV_Queries::get_orders_for_products( $products, array( 'vendor_id' => $user_id ) );
 
 		$providers      = array();
 		$provider_array = array();
@@ -312,8 +314,8 @@ class WCV_Vendor_Dashboard {
 
 		if ( wc_string_to_bool( get_option( 'wcvendors_capability_frontend_reports', 'yes' ) ) ) {
 
-			$can_view_address = wc_string_to_bool( get_option( 'wcvendors_capability_order_customer_shipping', 'yes' ) );
-
+			$can_view_address     = wc_string_to_bool( get_option( 'wcvendors_capability_order_customer_shipping', 'yes' ) );
+			$show_reversed_orders = wcv_is_show_reversed_order();
 			wc_get_template(
 				'reports.php',
 				array(
@@ -341,6 +343,7 @@ class WCV_Vendor_Dashboard {
 				'provider_array'   => $provider_array,
 				'can_view_orders'  => $can_view_orders,
 				'can_view_address' => $can_view_address,
+				'show_reversed'    => $show_reversed_orders,
 			),
 			'wc-vendors/dashboard/',
 			wcv_plugin_dir . 'templates/dashboard/'
