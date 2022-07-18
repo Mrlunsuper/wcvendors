@@ -43,13 +43,20 @@ class WCV_Vendor_Dashboard {
 			has_shortcode( $post->post_content, 'wcv_vendor_dashboard' )
 			|| has_shortcode( $post->post_content, 'wcv_orders' )
 			|| has_shortcode( $post->post_content, 'wcv_vendor_dashboard_nav' )
+			|| has_shortcode( $post->post_content, 'wcv_vendorslist' )
 		) {
-			wp_enqueue_style( 'wcv_frontend_style', wcv_assets_url . 'css/wcv-frontend.css' );			
+			wp_enqueue_style( 'dashicons' );
+			wp_enqueue_style( 'wcv_frontend_style', wcv_assets_url . 'css/wcv-frontend.css' );
 		}
 
 		wp_enqueue_style( 'wcv_vendor_store_style', wcv_assets_url . 'css/wcv-store.css' );
 	}
 
+	/**
+	 * Save the vendor shop settings from the dashboard
+	 *
+	 * @version 2.4.3 - Added PayPal masspay 
+	 */
 	public function save_vendor_settings() {
 		$user_id = get_current_user_id();
 
@@ -168,6 +175,20 @@ class WCV_Vendor_Dashboard {
 
 			if ( isset( $_POST['pv_seller_info'] ) ) {
 				update_user_meta( $user_id, 'pv_seller_info', $_POST['pv_seller_info'] );
+			}
+
+			// PayPal Masspay wallet
+			if ( isset( $_POST['wcv_paypal_masspay_wallet'] ) ) {
+				update_user_meta( $user_id, 'wcv_paypal_masspay_wallet', sanitize_text_field( $_POST['wcv_paypal_masspay_wallet'] ) );
+			} else {
+				delete_user_meta( $user_id, 'wcv_paypal_masspay_wallet' );
+			}
+
+			// PayPal Masspay venmo
+			if ( isset( $_POST['wcv_paypal_masspay_venmo_id'] ) ) {
+				update_user_meta( $user_id, 'wcv_paypal_masspay_venmo_id', sanitize_text_field( $_POST['wcv_paypal_masspay_venmo_id'] ) );
+			} else {
+				delete_user_meta( $user_id, 'wcv_paypal_masspay_venmo_id' );
 			}
 
 			// Bank details
