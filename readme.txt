@@ -273,7 +273,7 @@ WC Vendors Marketplace does not work with multisite WordPress. There are no plan
 * Fixed: Admin notify product email firing twice
 * Fixed: New vendor list pagination doesn't work when using the display options grid or list. (#870)
 
-== Version 2.4.3 - 21th July 2022 ==
+== Version 2.4.3 - 21st July 2022 ==
 
 * Added: Paypal Masspay Web CSV export (#860)
 * Added: Vendor ID and Product Count Columns on user screen (#858)
