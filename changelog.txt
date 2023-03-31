@@ -1,5 +1,10 @@
 Changelog for WC Vendors Marketplace
 
+Version 2.4.6 - 31st March 2023
+
+* Added: Vulnerability reporting point of contact (#886)
+* Fixed: Vendor selectbox incorrect or empty on product page (#885)
+
 Version 2.4.5 - 6th January 2023
 
 * Fixed: Escaped attributes to address security vulnerability report (#882)

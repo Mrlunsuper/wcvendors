@@ -6,10 +6,10 @@ Author URI: https://www.wcvendors.com/
 Plugin URI: https://www.wcvendors.com/
 Requires at least: 5.3.0
 Requires PHP: 7.4
-Tested up to: 6.1.1
+Tested up to: 6.2.0
 WC requires at least: 5.0.0
-WC tested up to: 7.1.0
-Stable tag: 2.4.5
+WC tested up to: 7.5.1
+Stable tag: 2.4.6
 License: GPLv2 or later
 
 The original multi-vendor marketplace plugin for WordPress and WooCommerce. Best support available. 
@@ -267,6 +267,11 @@ You can report any security bugs found in the source code of the WC Vendors Mark
 12. Email notifications for admins, customers and vendors
 
 == Changelog ==
+
+== Version 2.4.6 - 31st March 2023 ==
+
+* Added: Vulnerability reporting point of contact (#886)
+* Fixed: Vendor selectbox incorrect or empty on product page (#885)
 
 == Version 2.4.5 - 6th January 2023 == 
 
