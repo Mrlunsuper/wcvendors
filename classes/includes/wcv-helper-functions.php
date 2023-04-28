@@ -54,7 +54,7 @@ function wcv_paypal_currencies(){
  * PayPal wallet
  *
  * @version 2.4.3
- * @return void
+ * @return array $paypal_wallet
  */
 function wcv_paypal_wallet(){
 

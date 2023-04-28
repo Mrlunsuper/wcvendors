@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * @extends		WC_Payment_Gateway
  * @version		1.0.0
  * @package		WooCommerce/Classes/Payment
- * @author 		WC Vendors Ben Agresta
+ * @author 		WC Vendors
  */
 
 function add_wcvendors_test_gateway( $methods )
